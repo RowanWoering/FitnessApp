@@ -1,1 +1,1 @@
-web: python manage.py migrate && gunicorn gymapp.wsgi
+web: gunicorn gymapp.wsgi --log-file -
