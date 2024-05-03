@@ -23,7 +23,7 @@ SECRET_KEY = 'django-insecure-a^^&ut11o^qshjn2rfn0j6nt(bsp9w^op2%+3cv72l@9yert9)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 LOGIN_REDIRECT_URL = '/home/'
 LOGIN_URL = '/'
@@ -119,7 +119,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 import os
 
-STATIC_ROOT = BASE_DIR / 'productionfiles'
+# STATIC_ROOT = BASE_DIR / 'productionfiles'
 
 STATIC_URL = 'static/'
 
@@ -129,9 +129,12 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #Add this in your settings.py file:
-STATICFILES_DIRS = [
-    BASE_DIR / 'static'
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static'
+# ]
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT =os.path.join(BASE_DIR, 'staticfiles')
 #Add this in your settings.py file:
 
 
