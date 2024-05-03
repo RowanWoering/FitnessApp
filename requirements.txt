@@ -13,3 +13,4 @@ six==1.16.0
 sqlparse==0.4.4
 tzdata==2024.1
 unicorn==2.0.1.post1
+whitenoise==6.6.0
