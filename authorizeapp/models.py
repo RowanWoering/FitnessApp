@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.db.models import Max
 from django.core.validators import MinValueValidator, MaxValueValidator
+import os
 
 # Create your models here.
 class WorkoutName(models.Model):
@@ -124,6 +125,18 @@ class UserProfile(models.Model):
         ('Other', 'Other'),
     ]
     gender = models.CharField(max_length=30, null=True, blank=True, choices=GENDER_CHOICES)
+
+    def save(self, *args, **kwargs):
+        # Delete old file when replacing it with a new one
+        try:
+            this = UserProfile.objects.get(id=self.id)
+            if this.profile_picture != self.profile_picture:
+                if this.profile_picture:
+                    os.remove(this.profile_picture.path)
+        except:
+            pass  # when new photo then we do nothing, normal case
+
+        super(UserProfile, self).save(*args, **kwargs)
 
     # Additional fields as necessary
 
