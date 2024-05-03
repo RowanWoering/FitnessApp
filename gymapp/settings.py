@@ -23,7 +23,7 @@ SECRET_KEY = 'django-insecure-a^^&ut11o^qshjn2rfn0j6nt(bsp9w^op2%+3cv72l@9yert9)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['https://web-production-4f85.up.railway.app/']
 
 LOGIN_REDIRECT_URL = '/home/'
 LOGIN_URL = '/'
