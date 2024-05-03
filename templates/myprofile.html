@@ -1,0 +1,530 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}My Profile{% endblock title %}
+
+{% block content %}
+    <div class="container px-md-5 px-4">
+        <div class="bg-light rounded-3 py-md-5 py-4 px-md-5 px-4">
+            <div class="row gx-5 justify-content-center">
+                <div class="col-12 col-lg-8 col-xl-4 custom-border">
+                    <h1 class="fw-bolder mb-3">My Profile</h1>
+                    <p class="lead fw-normal text-muted mb-3">Edit and update your profile</p>
+                    <div class="card shadow mb-md-0 mb-5">
+
+                        <div class="card-body p-1 text-center mt-md-4 mt-4">
+                            <!-- Position Relative Container -->
+                            <div class="position-relative d-inline-block">
+                                <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture" class="img-fluid rounded-3" style="width: 250px; height: 350px; object-fit: cover;">
+                                <button class="btn btn-secondary edit-btn" data-bs-toggle="modal" data-bs-target="#editProfilePictureModal">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="card-body ">
+                                <p class="card-text text-center mb-0"><strong>Name:</strong> {{ user.first_name }}</p>
+                                <p class="card-text text-center mb-0"><strong>Age:</strong> {{ profile.age }}</p>
+                                <p class="card-text text-center mb-0"><strong>Gender:</strong> {{ profile.gender }}</p>
+                                <p class="card-text text-center mb-3"><strong>Length:</strong> {{ profile.length }} cm</p>
+                                <div class="text-md-end d-flex justify-content-end">
+                                    <button type="button" class="btn btn-primary"  data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                                        Edit Profile
+                                      </button>
+                                </div>
+    
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                <!-- Form fields for profile editing -->
+                                <form id="profileEditForm">
+                                    <div class="mb-3">
+                                    <label for="modalAge" class="form-label">Age</label>
+                                    <input type="text" class="form-control" id="modalAge" name="age">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="modalGender" class="form-label">Gender</label>
+                                        <select class="exercise-dropdown form-select" id="exercise-dropdown" name="gender" class="form-select" >
+                                            <option value="Female"> Female </option>
+                                            <option value="Male"> Male </option>
+                                            <option value="Other"> Other </option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="modalLength" class="form-label">Length</label>
+                                        <input type="number" class="form-control" id="modalLength" name="length">
+                                    </div>
+                                    <!-- Include other fields as necessary -->
+                                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                                </form>
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="submitProfileEdit()">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="editProfilePictureModal" tabindex="-1" aria-labelledby="editProfilePictureModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editProfilePictureModalLabel">Change Profile Picture</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="profilePictureForm" enctype="multipart/form-data">
+                                        <div class="mb-3">
+                                            <label for="profilePictureInput" class="form-label">Upload New Picture</label>
+                                            <input type="file" class="form-control" id="profilePictureInput" name="profile_picture" accept="image/*">
+                                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" onclick="submitNewProfilePicture()">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-8 col-xl-4 mt-md-0 mt-2 custom-border">
+                    <h1 class="fw-bolder mb-3 mt-md-2 mt-4">Body Mass</h1>
+                    <p class="lead fw-normal text-muted mb-3">Check out your body mass stats</p>
+
+                    <div class="accordion mb-5" id="accordionExample1">
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="muscle_percentage_user">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsemuscle" aria-expanded="false" aria-controls="collapsemuscle">
+                                    <p class="mb-0"><strong>Muscle Percentage: </strong> {{ muscle }}%</p>
+                                </button>
+                            </h3>
+                            <div class="accordion-collapse collapse" id="collapsemuscle" aria-labelledby="muscle_percentage_user" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+
+                                    <canvas id="muscleChart"></canvas> 
+                                    <form id="muscleForm" method="post">
+                                        {% csrf_token %}
+                                        <div class="input-group mb-3 mt-3">
+                                            <input type="text" class="form-control" placeholder="New muscle-%" name="muscle_percentage" aria-label="Muscle percentage">
+                                            <button class="btn btn-outline-primary" type="submit">Add</button>
+                                        </div>
+                                    </form>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="fat_percentage_user">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsefat" aria-expanded="false" aria-controls="collapsefat">
+                                    <p class="mb-0"><strong>Fat Percentage: </strong> {{ fat }}% </p>
+                                </button>
+                            </h3>
+                            <div class="accordion-collapse collapse" id="collapsefat" aria-labelledby="fat_percentage_user" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+
+                                    <canvas id="fatChart"></canvas>
+                                    <form id="fatForm" method="post">
+                                        {% csrf_token %}
+                                        <div class="input-group mb-3 mt-3">
+                                            <input type="text" class="form-control" placeholder="New fat-%" name="fat_percentage" aria-label="Fat percentage">
+                                            <button class="btn btn-outline-primary" type="submit">Add</button>
+                                        </div>
+                                    </form> 
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="weight_user">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseweight" aria-expanded="false" aria-controls="collapseweight">
+                                    <p class="mb-0"><strong>Weight:</strong> {{ weight }} kg </p>
+                                </button>
+                            </h3>
+                            <div class="accordion-collapse collapse" id="collapseweight" aria-labelledby="weight_user" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+
+                                    <canvas id="weightChart"></canvas> 
+                                    <form id="weightForm" method="post">
+                                        {% csrf_token %}
+                                        <div class="input-group mb-3 mt-3">
+                                            <input type="text" class="form-control" placeholder="New weight" name="weight" aria-label="Weight">
+                                            <button class="btn btn-outline-primary" type="submit">Add</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="bmi_user">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsebmi" aria-expanded="false" aria-controls="collapsebmi">
+                                    <p class="mb-0"><strong>BMI:</strong> {{ bmi }} </p>
+                                </button>
+                            </h3>
+                            <div class="accordion-collapse collapse" id="collapsebmi" aria-labelledby="bmi_user" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <canvas id="bmiChart"></canvas> 
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="modal fade" id="editProfilePictureModal" tabindex="-1" aria-labelledby="editProfilePictureModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editProfilePictureModalLabel">Change Profile Picture</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="profilePictureForm" enctype="multipart/form-data">
+                                        <div class="mb-3">
+                                            <label for="profilePictureInput" class="form-label">Upload New Picture</label>
+                                            <input type="file" class="form-control" id="profilePictureInput" name="profile_picture" accept="image/*">
+                                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" onclick="submitNewProfilePicture()">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mt-md-0 mt-2">
+                    <h1 class="fw-bolder mb-3 mt-md-2 mt-4">Session Stats</h1>
+
+                    <p class="lead fw-normal text-muted mb-3">Overall session statistics</p>
+                    <div class="mt-4 mb-1 justify-content-end">
+                        <div class="card">
+                            {% if stats_available %}
+                            <div class="card-body shadow">
+                                {% for timeframe, stats in workout_stats.items %}
+        
+                                {% if stats %}
+        
+                                    <h3 class="mb-2">{{ timeframe|title }}:</h3>
+                                    <table class="table mb-3">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">Workout Type</th>
+                                                <th class="text-center">Session Count</th>
+                                                <th class="text-center">Avg Rating</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for stat in stats %}
+                                                <tr>
+                                                    <td class="text-center">{{ stat.name }}</td>
+                                                    <td class="text-center">{{ stat.session_count }}</td>
+                                                    <td class="text-center">{{ stat.avg_rating }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% else %}
+
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="card-body shadow">
+                                <p class="mb-0 fst-italic text-muted">No stats yet</p>
+                            </div>
+
+                            {% endif %}
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .card img{
+                    max-width: 250px;
+                    max-height:350px;
+            }
+            @media (max-width: 768px) {
+                .card img{
+                    max-width: 200px;
+                    max-height:285px;
+                }
+            }
+            .edit-btn {
+                position: absolute;
+                top: 5px;
+                left: 5px;
+                z-index: 20; /* Ensure it's on top of other elements */
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5); /* Optional: Adds a shadow for better visibility */
+
+            }
+
+        </style>
+        <script>
+            function submitProfileEdit() {
+                var formData = new FormData($('#profileEditForm')[0]); // Get the form data using jQuery
+                
+                // Iterate over FormData and delete empty entries
+                for (let [key, value] of formData.entries()) {
+                    if (value === "") {
+                        formData.delete(key);
+                    }
+                }
+
+                $.ajax({
+                    url: "{% url 'update_profile' %}", // URL from Django url template tag
+                    type: "POST",
+                    data: formData,
+                    processData: false,  // tell jQuery not to process the data
+                    contentType: false,  // tell jQuery not to set contentType
+                    headers: {'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()}, // CSRF token header
+                    success: function(response) {
+                        if(response.success) {
+                            $('#editProfileModal').modal('hide'); // Hide the modal
+                            updateProfileDisplay(response.profile); // Update profile display function
+                            window.location.reload()
+                        } else {
+                            alert('Failed to update profile.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert("Error: " + error);
+                    }
+                });
+            }
+
+            function updateProfileDisplay(profile) {
+                // Update the DOM elements with new data
+                $("#profileAge").text(profile.age);
+                $("#profileGender").text(profile.gender);
+                $("#profileLength").text(profile.length ? profile.length + ' cm' : 'Not provided');
+            }
+            function submitNewProfilePicture() {
+                var formData = new FormData($('#profilePictureForm')[0]);
+
+                $.ajax({
+                    url: "{% url 'update_profile_picture' %}",  // Make sure this URL is defined in your Django urls.py
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()},
+                    success: function(response) {
+                        if(response.success) {
+                            $('#editProfilePictureModal').modal('hide');
+                            // Reload the profile picture on the page
+                            $('img[src]').attr('src', response.new_picture_url);
+                        } else {
+                            alert('Error updating profile picture.');
+                        }
+                    },
+                    error: function() {
+                        alert('Failed to update the profile picture.');
+                    }
+                });
+            }
+            $(document).ready(function() {
+                // AJAX call for muscle data when the muscle accordion is expanded
+                $('#collapsemuscle').on('show.bs.collapse', function () {
+                    $.ajax({
+                        url: '{% url "muscle_data" %}',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            // Assuming you have a function to render chart
+                            renderChart('muscleChart', data.dates, data.values, 'muscle-%');
+                        },
+                        error: function(error) {
+                            console.log('Error loading muscle data:', error);
+                        }
+                    });
+                });
+
+                // Similar setup for 'fat' and 'weight' data
+            });
+            $(document).ready(function() {
+                // AJAX call for muscle data when the muscle accordion is expanded
+                $('#collapsefat').on('show.bs.collapse', function () {
+                    $.ajax({
+                        url: '{% url "fat_data" %}',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            // Assuming you have a function to render chart
+                            renderChart('fatChart', data.dates, data.values, 'fat-%');
+                        },
+                        error: function(error) {
+                            console.log('Error loading fat data:', error);
+                        }
+                    });
+                });
+
+                // Similar setup for 'fat' and 'weight' data
+            });
+            $(document).ready(function() {
+                // AJAX call for muscle data when the muscle accordion is expanded
+                $('#collapseweight').on('show.bs.collapse', function () {
+                    $.ajax({
+                        url: '{% url "weight_data" %}',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            // Assuming you have a function to render chart
+                            renderChart('weightChart', data.dates, data.values, 'weight');
+                        },
+                        error: function(error) {
+                            console.log('Error loading weight data:', error);
+                        }
+                    });
+                });
+
+                // Similar setup for 'fat' and 'weight' data
+            });
+            $(document).ready(function() {
+                // AJAX call for muscle data when the muscle accordion is expanded
+                $('#collapsebmi').on('show.bs.collapse', function () {
+                    $.ajax({
+                        url: '{% url "bmi_data" %}',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            // Assuming you have a function to render chart
+                            renderChart('bmiChart', data.dates, data.values, 'bmi');
+                        },
+                        error: function(error) {
+                            console.log('Error loading bmi data:', error);
+                        }
+                    });
+                });
+
+                // Similar setup for 'fat' and 'weight' data
+            });
+
+            function renderChart(containerId, labels, data, name) {
+                var ctx = document.getElementById(containerId).getContext('2d');
+                var chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: name,
+                            data: data,
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        aspectRatio: 1.5,
+                        scales: {
+                            x: {  // Use 'x' instead of 'xAxes' for Chart.js version 3+
+
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 10  // Limit the number of ticks on the x-axis
+                            }
+                            },
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+            });
+            $(document).ready(function() {
+                $('#muscleForm').on('submit', function(e) {
+                    e.preventDefault(); // Prevent the default form submission
+
+                    $.ajax({
+                        url: '{% url "update_muscle" %}', // The URL to your server-side code to handle the update
+                        type: 'POST',
+                        data: $(this).serialize(), // Serializes the form's elements
+                        success: function(response) {
+                            window.location.reload()
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error: ' + error);
+                        }
+                    });
+                });
+                $('#fatForm').on('submit', function(e) {
+                    e.preventDefault(); // Prevent the default form submission
+
+                    $.ajax({
+                        url: '{% url "update_fat" %}', // The URL to your server-side code to handle the update
+                        type: 'POST',
+                        data: $(this).serialize(), // Serializes the form's elements
+                        success: function(response) {
+                            window.location.reload()
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error: ' + error);
+                        }
+                    });
+                });
+                $('#weightForm').on('submit', function(e) {
+                    e.preventDefault(); // Prevent the default form submission
+
+                    $.ajax({
+                        url: '{% url "update_weight" %}', // The URL to your server-side code to handle the update
+                        type: 'POST',
+                        data: $(this).serialize(), // Serializes the form's elements
+                        success: function(response) {
+                            window.location.reload()
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error: ' + error);
+                        }
+                    });
+                });
+
+            });
+
+        </script>
+    </div>
+{% endblock content %}
+

@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}Edit Workout{% endblock title %}
+
+{% block content %}
+    <div class="container px-md-5 px-4">
+        <!-- Contact form-->
+        <div class="bg-light rounded-3 py-md-5 py-4 px-md-5 px-4">
+            <div class="">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-8 col-xl-6 custom-border">
+                        <h1 class="fw-bolder">Edit workout</h1>
+                        <p class="lead fw-normal text-muted mb-4">{{ workout.name }}</p>
+                        <div class="gx-5 justify-content-center form-floating mb-5">
+ 
+                            <form id="answer-form" method="post" action="{% url 'submit' %}" name="testform">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="workoutName" class="form-label fw-bold">Name of Workout</label>
+                                    <input type="text" id="workoutName" name="workoutName" class="form-control" value="{{ workout }}" required>
+                                </div>
+                                <div class="card">
+                                    <div class="card-body shadow">
+                                        <div id="answer-container">
+                                            <input type="hidden" id="workoutIdInput" name="workoutId" value="{{ workout.id }}">
+                                            {% for exercise in exercises %}
+                                            <div class="row align-items-center g-2 mb-3">
+                                                
+                                                <div class="col-12 col-sm-4">
+
+                                                    <select class="exercise-dropdown form-select" id="exercise-dropdown-{{ forloop.counter }}" name="exercises[]" class="form-select" required>
+                                                        <option value="">Select Exercise</option>
+                                                        {% for custom_exercise_choose in all_custom_exercises %}
+                                                        <option value="{{ custom_exercise_choose.name }}" {% if custom_exercise_choose.name == exercise.exercise %}selected{% endif %}>
+                                                            {{ custom_exercise_choose.name }}
+                                                        </option>
+                                                        {% endfor %}
+                                                        {% for exercise_choose in all_exercises %}
+                                                        <option value="{{ exercise_choose.name }}" {% if exercise_choose.name == exercise.exercise %}selected{% endif %}>
+                                                            {{ exercise_choose.name }}
+                                                        </option>
+                                                        {% endfor %}
+
+                                                    </select>
+                                                </div>
+                                                <div class="col-6 col-sm-3">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Reps</span>
+                                                        <input type="number" name="reps[]" class="form-control" placeholder="Reps" value="{{ exercise.reps }}" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 col-sm-3">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Sets</span>
+                                                        <input type="number" name="sets[]" class="form-control" placeholder="Sets" value="{{ exercise.sets }}" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-sm-2 d-grid gap-2">
+                                                    <button type="button" class="remove-answer btn btn-outline-danger ">Remove</button>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                            
+    
+                                        <div class="mb-3 row">
+                                            <!-- Add Exercise Button spans 5 columns -->
+                                            <div class="col-4 col-md-5 d-grid gap-2">
+                                                <button type="button" name="addItemBtn" id="add-answer" class="btn btn-primary">
+                                                    <span class="d-none d-md-inline">Add Exercise</span>
+                                                    <span class="d-md-none">Add</span>
+                                                </button>
+                                            </div>
+                                        
+                                            <!-- Whitespace spans 1 column -->
+                                            <!-- On smaller screens, this space will not be visible as the buttons will stack -->
+                                            <div class="d-none d-md-block col-md-1"></div>
+                                        
+                                            <!-- Cancel Button spans 3 columns -->
+                                            <div class="col-4 col-md-3 d-grid gap-2">
+                                                <a href="{% url 'my_workout' %}" class="btn btn-secondary">
+                                                    <span class="d-none d-md-inline">Cancel</span>
+                                                    <span class="d-md-none"><i class="bi bi-x-lg"></i></span>
+                                                </a>
+                                            </div>
+                                        
+                                            <!-- Save Workout Button spans 3 columns -->
+                                            <div class="col-4 col-md-3 d-grid gap-2">
+                                                <button type="submit" id="submit" class="btn btn-success">
+                                                    <span class="d-none d-md-inline">Save</span>
+                                                    <span class="d-md-none">Save</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                
+                            </form>
+                            
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-xl-6 mt-md-0 mt-2">
+                        <h1 class="fw-bolder mt-4 mt-md-2">Your Workouts</h1>
+                        <p class="lead fw-normal text-muted mb-4">Check out your other workouts</p>
+                        <div class="btn_container">
+                            <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{% url 'my_workout' %}">Overview</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                /* Override Select2 styling */
+                /* Custom styles for Select2 to match Bootstrap, with responsiveness in mind */
+                .select2-container .select2-selection--single {
+                    height: calc(2.25rem + 2px);
+                    padding: .375rem 1.75rem .375rem .1rem;
+                    border: 1px solid #ced4da;
+                    border-radius: .25rem;
+                    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+                }
+                .select2-container .select2-selection--single .select2-selection__arrow {
+                        right: .375rem;
+                        top: 0.375rem
+                }
+
+                @media (max-width: 768px) {
+                    .select2-container .select2-selection--single {
+                        padding: .375rem .1rem;
+                    }
+                    .select2-container .select2-selection--single .select2-selection__arrow {
+                        right: .375rem;
+                        top: 0.375rem
+                    }
+                }
+
+            </style>
+            <script>
+                // JavaScript Code
+                $(document).ready(function() {
+                    // Initialize Select2 on existing dropdown
+                    $('.exercise-dropdown').select2({
+
+                        width: '100%',
+                        placeholder: 'Select an option',
+
+                    });
+
+                    $('#add-answer').click((e) => {
+                        e.preventDefault();
+                        // Create a unique identifier for the new dropdown, if necessary
+                        let uniqueId = new Date().getTime();
+
+                        $('#answer-container').append(`
+
+                            <div class="row align-items-center g-2 mb-3"> <!-- g-2 for tighter gutter -->
+                                <div class="col-12 col-sm-4">
+                                    <select class="exercise-dropdown form-select" name="exercises[]" class="form-select" required>
+                                        <option value="">Select Exercise</option>
+                                        {% for exercise_choose in all_exercises %}
+                                        <option value="{{ exercise_choose.name }}" >
+                                            {{ exercise_choose.name }}
+                                        </option>
+                                        {% endfor %}
+                                        {% for custom_exercise_choose in all_custom_exercises %}
+                                        <option value="{{ custom_exercise_choose.name }}">
+                                            {{ custom_exercise_choose.name }}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Reps</span>
+                                        <input type="number" name="reps[]" class="form-control" placeholder="0" required>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Sets</span>
+                                        <input type="number" name="sets[]" class="form-control" placeholder="0" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-2 d-grid gap-2"> <!-- Use d-grid for full-width button -->
+                                    <button type="button" class="remove-answer btn btn-outline-danger mt-md-0 mt-2">Remove</button>
+                                </div>
+                            </div>
+
+                            
+                        `);
+
+                        // Initialize Select2 on the newly added dropdown
+                        $('.exercise-dropdown').not('.select2-hidden-accessible').select2({
+
+                            width: '100%',
+                            placeholder: 'Select an option',
+
+                        });
+                    });
+                });
+
+
+                $(document).ready(function() {
+                    // Event delegation to handle clicks on dynamically added "Remove" buttons
+                    $('#answer-container').on('click', '.remove-answer', function() {
+                        // Find the closest parent .answer-row and remove it
+                        $(this).closest('.row').remove();
+                    });
+                });
+
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+
+                const csrftoken = getCookie('csrftoken');
+
+
+                $(document).ready(function() {
+                    $('#answer-form').submit(function(e) {
+                        e.preventDefault(); // Prevent the form from submitting through the browser.
+                        let workoutId = $('#workoutIdInput').val();
+                        let formData = new FormData(this);
+                        formData.append('csrfmiddlewaretoken', csrftoken); // Append CSRF token from the function defined earlier.
+                        formData.append('workoutId', workoutId) 
+                        console.log(formData)  
+                        $.ajax({
+                            type: 'POST',
+                            url: '{% url "submit" %}',
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+                            },
+                            success: function(response) {
+                                if(response.success) {
+                                    window.location.href = '{% url "my_workout" %}';
+                                    // Handle success (e.g., redirect or clear the form)
+                                } else {
+                                    alert("Error: " + response.error+"lol");
+                                    // Handle failure
+                                }
+                            },
+                            error: function(response) {
+                                // Handle AJAX error
+                                alert("An error occurred.");
+                            },
+                            processData: false,
+                            contentType: false,
+                            cache: false
+                        });
+                    });
+                });
+
+            </script>
+
+        </div> 
+
+        
+        <!-- Contact cards-->
+
+    </div>
+{% endblock content %}
+
+

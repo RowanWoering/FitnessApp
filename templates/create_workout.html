@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}Create Workout{% endblock title %}
+
+{% block content %}
+    <div class="container px-md-5 px-4">
+        <!-- Contact form-->
+        <div class="bg-light rounded-3 py-md-5 py-4 px-md-5 px-4">
+            <div class="">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-8 col-xl-7 custom-border">
+                        <h1 class="fw-bolder">New workout</h1>
+                        <p class="lead fw-normal text-muted mb-3">Create your new workout</p>
+                        <div class="gx-5 justify-content-center form-floating mb-5">
+                            <form id="answer-form" method="post" action="{% url 'submit' %}" name="testform">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="workoutName" class="form-label fw-bold ">Name of Workout</label>
+                                    <input type="text" id="workoutName" name="workoutName" class="form-control" placeholder="Name" required>
+                                </div>
+                                <div class="card">
+                                    <div class="card-body shadow">
+                                        <div id="answer-container">
+                                            <div class="row align-items-center g-2 mb-3"> <!-- g-2 for tighter gutter -->
+                                                <div class="col-12 col-md-4">
+        
+                                                    <select class="exercise-dropdown form-select" id="exercise-dropdown" name="exercises[]" class="form-select" required>
+                                                        <option value=""> None </option>
+                                                        {% for custom_exercise in custom_exercise_lst %}
+                                                        <option value="{{ custom_exercise.name }}">{{ custom_exercise.name }}</option>
+                                                        {% endfor %}
+                                                        {% for exercise in exercise_lst %}
+                                                        <option value="{{ exercise.name }}">{{ exercise.name }}</option>
+                                                        {% endfor %}
+
+                                                    </select>
+        
+                                                </div>
+                                                <div class="col-6 col-md-3">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Reps</span>
+                                                        <input type="number" name="reps[]" class="form-control" placeholder="0"  required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 col-md-3">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">Sets</span>
+                                                        <input type="number" name="sets[]" class="form-control" placeholder="0" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-2 d-grid gap-2"> <!-- Use d-grid for full-width button -->
+                                                    <button type="button" class="remove-answer btn btn-outline-danger">Remove</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6 col-md-6 d-grid gap-2">
+                                                <button type="button" name="addItemBtn" id="add-answer" class="btn btn-primary">
+                                                    <span class="d-none d-md-inline">Add Exercise</span>
+                                                    <span class="d-md-none">Add Exercise</span>
+                                                </button>
+                                            </div>
+                                            <div class="col-6 col-md-6 d-grid gap-2 justify-content-end">
+                                                <button type="submit" id="submit" class="btn btn-success">
+                                                    <span class="d-none d-md-inline">Save Workout</span>
+                                                    <span class="d-md-none">Save</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+    
+    
+
+                            </form>
+                            
+                        </div>
+    
+                    </div>
+                    <div class="col-12 col-lg-8 col-xl-5 mt-md-0 mt-2">
+                        <h1 class="fw-bolder mt-4 mt-md-2">Custom Exercise</h1>
+                        <p class="lead fw-normal text-muted mb-2">Add your your custom exercise here. When added the exercise will show up in the exercise list</p>
+                        <div class="gx-5 justify-content-center form-floating mb-3">
+
+                            <form id="custom-exercise-form" method="post">
+                                {% csrf_token %}
+                                <div class="card">
+                                    <div class="card-body shadow">
+                                        <div class="row align-items-center g-2 mb-3"> <!-- g-2 for tighter gutter -->
+
+                                            <div class="col-12 col-md-12">
+                                                <div class="input-group">
+                                                    <span class="input-group-text">Name</span>
+                                                    <input type="text" class="form-control" id="exerciseName" name="name" placeholder="Enter exercise name" required>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Add Custom Exercise</button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                        <!-- <a class="btn btn-primary btn-lg px-4 me-sm-3 mb-4" href="{% url 'my_workout' %}">Overview</a> -->
+
+                    </div>
+                </div>
+            </div>
+            <style>
+                /* Override Select2 styling */
+                /* Custom styles for Select2 to match Bootstrap, with responsiveness in mind */
+                .select2-container .select2-selection--single {
+                    height: calc(2.25rem + 2px);
+                    padding: .375rem 1.75rem .375rem .1rem;
+                    border: 1px solid #ced4da;
+                    border-radius: .25rem;
+                    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+                }
+                .select2-container .select2-selection--single .select2-selection__arrow {
+                        right: .375rem;
+                        top: 0.375rem
+                }
+
+                @media (max-width: 768px) {
+                    .select2-container .select2-selection--single {
+                        padding: .375rem .1rem;
+                    }
+                    .select2-container .select2-selection--single .select2-selection__arrow {
+                        right: .375rem;
+                        top: 0.375rem
+                    }
+                }
+
+            </style>
+                
+                
+                
+
+            <script>
+                $(document).ready(function() {
+                    // Initialize Select2 on existing dropdown
+                    $('.exercise-dropdown').select2({
+
+                        width: '100%',
+                        placeholder: 'Select an exercise',
+
+                    });
+
+                    $('#add-answer').click((e) => {
+                        e.preventDefault();
+                        // Create a unique identifier for the new dropdown, if necessary
+                        let uniqueId = new Date().getTime();
+
+                        $('#answer-container').append(`
+                            <div class="row align-items-center g-2 mb-3"> <!-- g-2 for tighter gutter -->
+                                <div class="col-12 col-sm-4">
+                                    <select class="exercise-dropdown form-select" id = "exercise-dropdown_${uniqueId}" name="exercises[]" required>
+                                        <option value=""> None </option>
+                                        {% for custom_exercise in custom_exercise_lst %}
+                                        <option value="{{ custom_exercise.name }}">{{ custom_exercise.name }}</option>
+                                        {% endfor %}
+                                        {% for exercise in exercise_lst %}
+                                        <option value="{{ exercise.name }}">{{ exercise.name }}</option>
+                                        {% endfor %}
+
+                                    </select>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Reps</span>
+                                        <input type="number" name="reps[]" class="form-control" placeholder="0" required>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="input-group">
+                                        <span class="input-group-text">Sets</span>
+                                        <input type="number" name="sets[]" class="form-control" placeholder="0" required>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-2 d-grid gap-2"> <!-- Use d-grid for full-width button -->
+                                    <button type="button" class="remove-answer btn btn-outline-danger">Remove</button>
+                                </div>
+                            </div>
+                            
+                        `);
+
+                        // Initialize Select2 on the newly added dropdown
+                        $('.exercise-dropdown').not('.select2-hidden-accessible').select2({
+
+                            width: '100%',
+                            placeholder: 'Select an exercise',
+
+                        });
+                        updateAllExerciseDropdowns()
+                    });
+                });
+
+
+                // Event delegation for dynamically added "Remove Exercise" buttons
+                $('#answer-container').on("click", ".remove-answer", function(e) {
+                    e.preventDefault();
+                    $(this).closest('.row').remove(); // Use .closest('.row') to remove the entire set row
+                });
+
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        const cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            const cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+
+                const csrftoken = getCookie('csrftoken');
+
+
+                $(document).ready(function() {
+                    $('#answer-form').submit(function(e) {
+                        e.preventDefault(); // Prevent the form from submitting through the browser.
+
+                        let formData = new FormData(this);
+                        formData.append('csrfmiddlewaretoken', csrftoken); // Append CSRF token from the function defined earlier.
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '{% url "submit" %}',
+                            data: formData,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+                            },
+                            success: function(response) {
+                                if(response.success) {
+                                    window.location.href = '{% url "my_workout" %}';
+                                    // Handle success (e.g., redirect or clear the form)
+                                } else {
+                                    alert("Error: " + response.error);
+                                    // Handle failure
+                                }
+                            },
+                            error: function(response) {
+                                // Handle AJAX error
+                                alert("An error occurred.");
+                            },
+                            processData: false,
+                            contentType: false,
+                            cache: false
+                        });
+                    });
+                });
+                $(document).ready(function() {
+                    $('#custom-exercise-form').submit(function(e) {
+                        e.preventDefault(); // Prevent the normal form submission
+                        let formData = new FormData(this); // Create a FormData object from the form
+                        formData.append('csrfmiddlewaretoken', csrftoken); // Ensure CSRF token is included
+
+                        $.ajax({
+                            type: 'POST',
+                            url: '{% url "add_custom_exercise" %}', // Update with the URL mapped to your view
+                            data: formData,
+                            processData: false,  // tell jQuery not to process the data
+                            contentType: false,  // tell jQuery not to set contentType
+                            success: function(response) {
+                                if(response.success) {
+                                // Use the response data to create a new option
+
+
+                                $('.exercise-dropdown').each(function() {
+                                    var newOption = new Option(response.name, response.name);
+                                    $(this).prepend(newOption).trigger('change');
+                                });
+
+
+                                // Reset the form fields
+                                $('#custom-exercise-form').trigger("reset");
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                // Handle error
+                                alert("An error occurred: " + error);
+                            }
+                        });
+                    });
+                });
+                function updateAllExerciseDropdowns(newOption) {
+                    $('.exercise-dropdown').each(function() {
+                        if (newOption) {
+                            var clonedOption = new Option(newOption.text, newOption.value, false, false);
+                            $(this).append(clonedOption).trigger('change');
+                        }
+                        // Initialize or re-initialize Select2
+                        $(this).select2({
+                            width: '100%',
+                            placeholder: 'Select an option'
+                        });
+                    });
+                }
+
+            </script>
+
+
+
+        </div> 
+
+        
+        <!-- Contact cards-->
+
+    </div>
+{% endblock content %}

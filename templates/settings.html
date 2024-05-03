@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}My Settings{% endblock title %}
+
+{% block content %}
+    <div class="container px-md-5 px-4">
+        <!-- Contact form-->
+        <div class="bg-light rounded-3 py-md-5 py-4 px-md-5 px-4">
+            <div class="">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-12 col-xl-12">
+                    <div class="col-lg-12 col-xl-12">
+                        <h1 class="fw-bolder mb-3">Settings</h1>
+                        <p class="lead fw-normal text-muted mb-4">Choose what friends can and cannot see on your profile</p>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3 form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="showPersonalInfo" name="personal_info" {% if settings_user.show_personal_info %} checked {% endif %}>
+                                <label class="form-check-label" for="showPersonalInfo">Show Personal Information (Show information like weight, length and age on your profile)</label>
+                            </div>
+                            <div class="mb-3 form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="showSessions" name="sessions" {% if settings_user.show_sessions %} checked {% endif %}>
+                                <label class="form-check-label" for="showSessions">Show Sessions (Show your sessions and session statistics)</label>
+                            </div>
+                            <div class="mb-4 form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="showProgress" name="progress" {% if settings_user.show_progress %} checked {% endif %}>
+                                <label class="form-check-label" for="showProgress">Show Progress (Show your PRs and Progression stats)</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </form>
+   
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div> 
+
+    </div>
+{% endblock content %}
+
+

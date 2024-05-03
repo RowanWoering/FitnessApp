@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}Home Page{% endblock title %}
+
+{% block content %}
+    <header class="bg-dark py-4">
+        <div class="container px-5">
+            <div class="py-5 px-4 px-md-5">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-12 col-lg-8 col-xl-6 custom-border-light">
+                        <div class="col-md-10 col-12">
+                            <div class="my-5 text-center text-xl-start">
+                                <h1 class="fw-bolder text-white mb-3 "> {{ opening.0 }} </h1>
+                                <h2 class="fw-bolder text-white mb-5 fst-italic"> {{ opening.1 }}</h2>
+                                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start">
+                                    <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{% url 'create_session' %}">New Session</a>
+                                    <a class="btn btn-outline-light btn-lg px-4" href="{% url 'myprofile' %}">My Profile</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-lg-8 col-xl-6 text-md-start text-center">
+                        <div class="my-5 ">
+                            <h1 class="fw-bolder text-white mb-3">Upcoming Sessions</h1>
+                            {% if upcoming_sessions %}
+
+                                    {% for session in upcoming_sessions %}
+   
+                                            <p class=" text-white fs-4"><strong>{{ session.name }}</strong> - {{ session.date }}</p>
+                                            <!-- Additional session details here -->
+
+                                    {% endfor %}
+
+                            {% else %}
+                                <p class="text-white fst-italic text-muted">No upcoming sessions.</p>
+                            {% endif %}
+                            
+                        </div>
+                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-xl-start mt-4">
+                            <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{% url 'my_session' %}">My Sessions</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Features section-->
+    <section class="" id="features">
+        <div class="container px-md-5 px-4 my-5">
+            <div class="bg-light rounded-3 py-4 px-4 px-md-5 mb-5">
+                <div class="row gx-5">
+                    <div class="col-12 col-lg-8 col-xl-6 custom-border">
+                    <h1 class="fw-bolder mb-2 mt-md-4 mt-2 text-md-start text-center">Your last session</h1>
+
+                        {% if last_session %}
+
+                            {% for session, exercises in last_session %}
+                                <p class="fs-4 text-md-start text-center"><strong>{{ session.name }}</strong> - {{ session.date }}</p>
+                                <div class="card p-3 shadow mb-5">
+                                    {% for exercise in exercises %}
+                                    <div class="fs-5"><strong>{{ exercise.exercise }}</strong></div>
+                                        {% for set in exercise.set_info %}
+                                        <div class="card mb-2">
+                                            <div class="card-body p-2">
+                                                <div class="row g-1 align-items-center">
+                                                    <div class="col-6 col-md-3">
+                                                        <div class="fs-6"><strong>Set:</strong> {{ set.set }}</div>
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <div>            
+                                                            <span class="d-md-none">Wt:  {{ set.weight }}kg</span> <!-- Visible on xs to sm (mobile) -->
+                                                            <span class="d-none d-md-inline">Weight: {{ set.weight }}kg</span>
+                                                        </div>
+                                        
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <div>Reps: {{ set.reps }}</div>
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <div>Partials: {{ set.partials }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    {% endfor %}
+
+
+                                    <div class=" mt-4">
+                                        <div class="row align-items-center">
+                                            <!-- Rating on the left -->
+                                            <div class="col-12 col-md-6 mb-2 mb-md-0">
+                                                <div class="d-flex align-items-center">
+                                                    <strong class="fs-5 me-2 small-on-mobile">Rating:</strong>
+                                                    <span class="fs-5 small-on-mobile">{{ session.rating }}</span>
+                                                    <img src="{% static 'images/9004759_star_favorite_award_like_icon.png' %}" alt="Star Logo" class="ms-2 image-small-on-mobile" style="width: 24px;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                        <p class="fs-4 fst-italic text-md-start text-muted text-center mb-5">No previous sessions yet</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-12 col-lg-8 col-xl-6 mt-md-0 mt-2">
+                        <h1 class="fw-bolder mb-2 mt-md-4 mt-4 text-md-start text-center">Your PRs</h1>
+                        <p class="fs-4 text-md-start text-center">Look at your last five PRs</p>
+                        {% if last_prs %}
+                        <div class="card p-3 shadow mb-2">
+                        {% for pr in last_prs %}
+
+                            <p class="fs-5 d-md-none"><strong>{{ pr.exercise }}</strong>:<br> {{ pr.weight }}kgs for {{ pr.reps }} reps on <br> {{ pr.date }}</p>
+                            <p class="fs-5 d-none d-md-inline"><strong>{{ pr.exercise }}</strong>:<br> {{ pr.weight }}kgs for {{ pr.reps }} reps on  {{ pr.date }}</p>
+                        {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="fs-5 fst-italic text-md-start text-muted text-center">No PRs yet.</p>
+                        {% endif %}
+                        <div class="d-grid gap-3 d-sm-flex justify-content-sm-center justify-content-md-end mt-4">
+                            <a class="btn btn-primary btn-lg px-4" href="{% url 'my_PRs' %}">My PRs</a>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <style>
+        .py-5{
+            padding-top: 0rem !important;
+            border-color: antiquewhite;
+            border: 2px;
+
+        }
+        .bg-dark{
+            border: 1px solid;
+            border-bottom-color: white;
+            
+        }
+
+    </style>
+    
+{% endblock content %}
+
+

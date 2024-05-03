@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}Friends{% endblock title %}
+
+{% block content %}
+<div class="container px-5">
+    <!-- Contact form-->
+    <div class="bg-light rounded-3 py-md-5 py-4 px-md-5 px-4">
+        <div class="">
+            <div class="row gx-5 justify-content-center">
+                <div class="col-lg-8 col-xl-6 custom-border">
+                    <h1 class="fw-bolder mb-4">My Friends </h1>
+                    <div class="list-group mb-5">
+                        {% if friends %}
+                            {% for friend in friends %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-person-arms-up"></i> 
+                                        {{ friend.first_name }}
+                                    </div>
+
+                                    <a href="{% url 'view_friend_workout' friend.id %}" class="btn btn-outline-primary"><i class="bi bi-person-vcard"></i> Profile</a>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="fst-italic text-muted">No friends yet.</p>
+                        {% endif %}
+
+                    </div>
+
+
+
+                </div>
+                <div class="col-lg-8 col-xl-6  mt-md-0 mt-2">
+                    <h1 class="fw-bolder mb-4 mt-4 mt-md-2">All Users</h1>
+                    <div class="accordion mb-4" id="accordionExample">
+                        {% if non_friends %}
+                    
+                            <div class="accordion-item">
+                                <h3 class="accordion-header" id="heading{{ session.id }}">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ session.id }}" aria-expanded="false" aria-controls="collapse{{ session.id }}">
+                                        Users
+                                    </button>
+                                </h3>
+
+                                    <div class="accordion-collapse collapse" id="collapse{{ session.id }}" aria-labelledby="heading{{ session.id }}" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            {% for user in non_friends %}
+                                            <div class="list-group-item d-flex justify-content-between align-items-center mt-2">
+                                                <div>
+                                                    <i class="bi bi-person-lock"></i>
+                                                    {{ user.first_name }}
+                                                </div>
+
+                                                {% if user.id in requests_sent %}
+                                                    <span class="badge bg-info text-white">
+                                                        <i class="bi bi-person-gear"></i>
+
+                                                        <span class="d-md-none">Pending</span>
+                                                        <span class="d-none d-md-inline">Pending</span>
+                                                        </span>
+                                                {% else %}
+                                                    <form action="{% url 'send_friend_request' user_id=user.id %}" method="post" class="d-inline">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-primary btn-sm">
+                                                            <i class="bi bi-person-plus"></i> 
+                                                            <span class="d-md-none">Send</span>
+                                                            <span class="d-none d-md-inline">Send friend request</span>
+
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+  
+                                            {% endfor %}
+
+                                        </div>
+                                    </div>
+
+                            </div>
+
+                        {% else %}
+                            <p>No more users.</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="requests_cont mt-4">
+                        <div class="card shadow mb-1">
+                            <div class="card-body ">
+                                <h5 class="h6 h-md-5">Incoming Friend Requests:</h5>
+                                {% for request in requests_received %}
+                                    <div class="list-group-item d-flex justify-content-between align-items-center mt-3">
+                                        <div>
+                                            <i class="bi bi-person"></i> {{ request.sender.first_name }}
+                                        </div>
+
+                                        <div>
+                                            <a href="{% url 'accept_friend_request' request_id=request.id %}" class="btn btn-success btn-sm"> 
+                                                <i class="bi bi-person-check"></i>
+                                                <span class="d-none d-md-inline">Accept</span>
+                                            </a>
+                                            <a href="{% url 'decline_friend_request' request_id=request.id %}" class="btn btn-danger btn-sm"> 
+                                                <i class="bi bi-person-dash"></i> 
+                                                <span class="d-none d-md-inline">Decline</span>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                {% empty %}
+                                    <p class="fst-italic mb-0 text-muted">No incoming friend requests.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div> 
+
+    
+    <!-- Contact cards-->
+
+</div>
+
+
+{% endblock content %}
+

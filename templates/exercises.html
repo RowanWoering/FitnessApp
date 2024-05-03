@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}All Exercises{% endblock title %}
+
+{% block content %}
+    <div class="container px-md-5 px-4">
+        <!-- Contact form-->
+        <div class="bg-light rounded-3 py-md-5 py-4 px-md-5 px-4">
+            <div class="">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-12 col-xl-12">
+                        <h1 class="fw-bolder mb-3">Exercises</h1>
+                        <p class="lead fw-normal text-muted mb-4">Find new exercises by filling in a muscle group and search the equipment dropdowns</p>
+                        <form method="post" class="mb-1">
+                            {% csrf_token %}
+                            <div class="justify-content-between">
+                                <div class="row d-flex">
+                                    <div class="mb-3 col-12 col-md-3">
+                                        <div class="input-group">
+                                            <span class="input-group-text d-md-none rounded-left">Muscle group</span>
+                                            <span class="input-group-text d-none d-md-inline rounded-left">Muscle Group</span>
+
+                                            <select name="muscle_group" id="id_muscle_group" class="form-select">
+                                                <option value="" >None</option>
+                                                {% for group in muscle_groups %}
+                                                <option value="{{ group }}" {% if group == current_group %}selected{% endif %}>{{ group }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-12 col-md-2 d-grid mb-3 align-items-center justify-md-content-end">
+                                        <button type="submit" class="btn btn-primary ">Filter Exercises</button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </form>
+                    
+                        {% if exercises_by_equipment %}
+                        <div class="row">
+                            {% for equipment, exercises in exercises_by_equipment.items %}
+                                <div class="col-md-3 mb-2"> <!-- Each accordion takes up 3 of 12 columns -->
+                                    <div class="accordion" id="equipmentAccordion{{ forloop.counter }}">
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                                                    {{ equipment|default:"No Equipment" }}
+                                                </button>
+                                            </h2>
+                                            <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#equipmentAccordion{{ forloop.counter }}">
+                                                <div class="accordion-body">
+                                                    <ul class="list-group list-group-flush">
+                                                        {% for exercise in exercises %}
+                                                            <li class="list-group-item">{{ exercise.name }}</li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if forloop.counter|divisibleby:4 and not forloop.last %}
+                                    </div><div class="row"> <!-- Start a new row after every 4 items unless it's the last item -->
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        {% endif %}
+                    </div>
+                    <style>
+
+
+                        .accordion-body {
+
+                            max-height: 200px; /* Set a fixed max height */
+                            overflow-y: auto; /* Make it scrollable */
+                        }
+                    </style>
+                    <script>
+                        document.addEventListener('click', function(event) {
+                            var withinBoundaries = event.composedPath().includes(document.getElementById('equipmentAccordion'));
+                        
+                            if (!withinBoundaries) {
+                                $('.accordion-collapse').collapse('hide');  // Collapse all accordions
+                            }
+                        });
+                     </script>
+                </div>
+            </div>
+
+
+        </div> 
+
+    </div>
+{% endblock content %}
+
+

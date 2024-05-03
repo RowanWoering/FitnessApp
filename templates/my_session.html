@@ -1,0 +1,235 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}My Sessions{% endblock title %}
+
+{% block content %}
+    <div class="container px-md-5 px-4">
+        <!-- Contact form-->
+        <div class="bg-light rounded-3 py-md-5 py-4 px-md-5 px-4">
+            <div class="mb-1">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-12 col-lg-8 col-xl-6 custom-border">
+                        <h1 class="fw-bolder">My Sessions</h1>
+                        <p class="lead fw-normal text-muted mb-4">Check out your sessions</p>
+                        <div class="mt-4 justify-content-end">
+                            <form method="post" id="monthform">
+                                {% csrf_token %}
+                                <div class="row d-flex">
+                                    <div class="mb-3 col-6 col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text d-md-none rounded-left">Y</span>
+                                            <span class="input-group-text d-none d-md-inline rounded-left">Year</span>
+
+                                            <select name="year" id="id_year" class="form-select">
+                                                {% for year, name in years %}
+                                                <option value="{{ year }}" {% if year == current_year %}selected{% endif %}>{{ name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="mb-3 col-6 col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text d-md-none rounded-left">M</span>
+                                            <span class="input-group-text d-none d-md-inline rounded-left">Month</span>
+
+                                            <select name="month" id="id_month" class="form-select">
+                                                {% for month, name in months %}
+                                                <option value="{{ month }}" {% if month == current_month %}selected{% endif %}>{{ name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-12 col-md-4 d-grid mb-3 align-items-center justify-md-content-end">
+                                        <button type="submit" class="btn btn-primary ">Filter Sessions</button>
+                                    </div>
+
+                                </div>
+
+                            </form>
+                        </div>
+                        <div class="gx-5 justify-content-center form-floating mb-3">
+                            <div class="all_sessions">
+                                <div class="accordion mb-5" id="accordionExample1">
+                                    {% if sessions %}
+                                
+                                        {% for session, exercises in sessions %}
+                                        <div class="accordion-item">
+                                            <h3 class="accordion-header" id="heading{{ session.id }}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ session.id }}" aria-expanded="false" aria-controls="collapse{{ session.id }}">
+                                                    {{ session.name }} on {{ session.date }}
+                                                </button>
+                                            </h3>
+                                            <div class="accordion-collapse collapse" id="collapse{{ session.id }}" aria-labelledby="heading{{ session.id }}" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    {% for exercise in exercises %}
+                                                        <div class="fs-5"><strong>{{ exercise.exercise }}</strong></div>
+                                                        {% for set in exercise.set_info %}
+                                                        <div class="card mb-2">
+                                                            <div class="card-body p-2">
+                                                                <div class="row g-1 align-items-center">
+                                                                    <div class="col-6 col-md-3">
+                                                                        <div class="fs-6"><strong>Set:</strong> {{ set.set }}</div>
+                                                                    </div>
+                                                                    <div class="col-6 col-md-3">
+                                                                        <div>            
+                                                                            <span class="d-md-none">Wt:  {{ set.weight }}kg</span> <!-- Visible on xs to sm (mobile) -->
+                                                                            <span class="d-none d-md-inline">Weight: {{ set.weight }}kg</span>
+                                                                        </div>
+                                                           
+                                                                    </div>
+                                                                    <div class="col-6 col-md-3">
+                                                                        <div>Reps: {{ set.reps }}</div>
+                                                                    </div>
+                                                                    <div class="col-6 col-md-3">
+                                                                        <div>Partials: {{ set.partials }}</div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        {% endfor %}
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    {% endfor %}
+                                                    <div class=" mt-4">
+                                                        <div class="row align-items-center">
+                                                            <!-- Rating on the left -->
+                                                            <div class="col-12 col-md-6 mb-2 mb-md-0">
+                                                                <div class="d-flex align-items-center">
+                                                                    <strong class="fs-5 me-2 small-on-mobile">Rating:</strong>
+                                                                    <span class="fs-5 small-on-mobile">{{ session.rating }}</span>
+                                                                    <img src="{% static 'images/9004759_star_favorite_award_like_icon.png' %}" alt="Star Logo" class="ms-2 image-small-on-mobile" style="width: 24px;">
+                                                                </div>
+                                                            </div>
+                                                            <!-- Buttons on the right -->
+                                                            <div class="col-12 col-md-6 text-md-end">
+                                                                <a href="{% url 'edit_session' session.id %}" class="btn btn-outline-primary">Edit</a>
+                                                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ session.id }}">Delete</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal fade" id="deleteModal{{ session.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ session.id }}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteModalLabel{{ session.id }}">Confirm Delete</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Are you sure you want to delete this session?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                        <button data-delete-url="{% url 'delete_session' session_id=session.id %}" onclick="deleteSession(this.getAttribute('data-delete-url'));" class="btn btn-danger" data-bs-dismiss="modal">Delete</button>
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <style>
+                                            .input-group img{
+                                                margin-left: 10px !important;
+                                                height:38px;
+                                            }
+                                            @media (max-width: 576px) { /* Targeting small devices */
+                                                .small-on-mobile {
+                                                    font-size: 0.8rem; /* Smaller text on mobile */
+                                                }
+                                                .image-small-on-mobile {
+                                                    width: 20px; /* Smaller image on mobile */
+                                                }
+                                            }
+                                        </style>
+                                        {% csrf_token %}
+                                        <script type="text/javascript">
+                                        var csrfToken = "{{ csrf_token }}";
+                                        </script>
+                                        <script type="text/javascript">
+                                            function deleteSession(url) {
+                                                var deleteSessionUrl = "{% url 'delete_session' session_id=0 %}".replace('/0/', '/');
+
+     
+                                                fetch(url, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'X-CSRFToken': csrfToken, // Ensure you are passing the CSRF token
+                                                        'Content-Type': 'application/json',
+                                                    },
+                                                    credentials: 'same-origin' // Necessary for including the CSRF token
+                                                })
+                                                .then(response => {
+                                                    if (response.ok) {
+                                                        // Handle successful deletion here, such as refreshing the page or removing the session element from the DOM
+                                                        location.reload(); // For example, reload the page to reflect changes
+                                                    } else {
+                                                        alert("An error occurred. Please try again.");
+                                                    }
+                                                })
+                                                .catch(error => {
+                                                    console.error('Error:', error);
+                                                });
+                                            }
+                                            </script>
+                                            
+
+                                        {% endfor %}
+    
+                                    {% else %}
+                                        <p class="text-muted fst-italic">You have no sessions saved for this month.</p>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-8 col-xl-6 mt-md-0 mt-2">
+                        <h1 class="fw-bolder mt-4 mt-md-2">New session</h1>
+                        <p class="lead fw-normal text-muted mb-4">Create a new session</p>
+                        <div class="btn_container">
+                            <a class="btn btn-primary px-4 me-sm-3" href="{% url 'create_session' %}">New</a>
+                        </div>
+
+
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div> 
+
+        <script>
+            $(document).ready(function() {
+                $('#monthform').on('submit', function(e) {
+                    e.preventDefault();
+                    var formData = $(this).serialize();
+                    $.ajax({
+                        url: '{% url "my_session" %}',
+                        type: 'POST',
+                        data: formData,
+                        success: function(data) {
+                            $('#accordionExample1').html(data.html);
+                        },
+                        error: function() {
+                            alert('Failed to update the sessions.');
+                        }
+                    });
+                });
+            });
+        </script>
+        <!-- Contact cards-->
+
+    </div>
+{% endblock content %}

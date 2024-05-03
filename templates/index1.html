@@ -1,0 +1,136 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log in</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <div class="body_container">
+        <div class="container mt-5">
+            <div class="text-center mb-4">
+
+                <div class="nav_bar">
+
+                    <h1>RoRoFit</h1>
+                </div>
+            </div>
+        
+            <div class="login_container">
+                <div class="row justify-content-center">
+                    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+                        <div class="form-container-custom">
+                            {% if state %}
+                                <div class="form-structor">
+                    
+                                    <form method="post" class="signup">
+                                        {% csrf_token %}
+                                        <h2 class="form-title" id="signup">Sign up</h2>
+                                        <div class="form-holder">
+                                            <input type="text" class="input" placeholder="User Name" name="username" required/>
+                                            <input type="text" class="input" placeholder="Name" name="name" required/>
+                                            <input type="password" class="input" placeholder="Password" name="password" required/>
+                                        </div>
+                                        {% if error_sub %}
+                                            <p>{{ error_sub }}</p>
+                                        {% endif %}
+                                        <button class="submit-btn" name="signup">Sign up</button>
+                                    </form>
+                
+                                    <form method="post", class="login slide-up">
+                                        {% csrf_token %}
+                                        <div class="center">
+                                            <h2 class="form-title" id="login">Log in</h2>
+                                            <div class="form-holder">
+                                                <input type="text" class="input" placeholder="User Name" name="username" required/>
+                                                <input type="password" class="input" placeholder="Password" name="password" required/>
+                                            </div>
+                                            {% if error_log %}
+                                                <p>{{ error_log }}</p>
+                                            {% endif %}
+                                            <button class="submit-btn" name="login">Log in</button>
+                                        </div>
+                
+                                    </form>
+                
+                                </div>
+                            {% else %}
+                                <div class="form-structor">
+                    
+                                    <form method="post" class="signup slide-up">
+                                        {% csrf_token %}
+                                        <h2 class="form-title" id="signup">Sign up</h2>
+                                        <div class="form-holder">
+                                            <input type="text" class="input" placeholder="User Name" name="username" />
+                                            <input type="text" class="input" placeholder="First name" name="name" />
+                                            <input type="password" class="input" placeholder="Password" name="password" />
+                                        </div>
+                                        <button class="submit-btn" name="signup">Sign up</button>
+                                    </form>
+                
+                                    <form method="post", class="login">
+                                        {% csrf_token %}
+                                        <div class="center">
+                                            <h2 class="form-title" id="login">Log in</h2>
+                                            <div class="form-holder">
+                                                <input type="text" class="input" placeholder="User Name" name="username"/>
+                                                <input type="password" class="input" placeholder="Password" name="password"/>
+                                            </div>
+                                            {% if error_log %}
+                                                <p>{{ error_log }}</p>
+                                            {% endif %}
+                                            <button class="submit-btn" name="login">Log in</button>
+                                        </div>
+                
+                                    </form>
+                
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    <style>
+                            .form-container-custom {
+                            max-width: 400px; /* Adjust max-width as per your preference */
+                            margin: auto; /* This centers the div when max-width is less than the parent's width */
+                        }
+
+                        @media (max-width: 576px) {
+                            .form-container-custom {
+                                padding: 0 20px; /* Adds some padding on smaller screens */
+
+                            }
+                            .form-structor {
+                                /* Adapt or override styles specifically for small screens */
+                                padding: 15px; /* Adjust padding as needed */
+                                max-width: 300px;
+                                height: 400px;
+
+                            }
+                            .login_container{
+                                margin-top: 50px;
+                            }
+                            .nav_bar{
+                                justify-content: center;
+                            }
+                        }
+                        p{
+                            color: red;
+                            font-size: 10px;
+                        }
+                    </style>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <script src="static/main.js"></script>
+</body>
+</html>
+

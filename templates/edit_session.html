@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block title %}Edit Sessions{% endblock title %}
+
+{% block content %}
+    <div class="container px-md-5 px-4">
+        <!-- Contact form-->
+        <div class="bg-light rounded-3 py-md-5 py-4 px-md-5 px-4">
+            <div class="mb-5">
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-12 col-lg-8 col-xl-6 custom-border">
+                        <h1 class="fw-bolder">Edit Session</h1>
+                        <p class="lead fw-normal text-muted mb-4">Edit {{ session.name }} on {{ session.date }}</p>
+                        <div class="gx-5 justify-content-center form-floating mb-3">
+                            <form method="post">
+
+                                {% csrf_token %}
+
+                                {% for exercise in exercises %}
+                                <div class="card">
+                                    <div class="card-body shadow">
+                                        <div class="">
+
+                                            <h3 class="d-flex justify-content-between align-items-center">{{ exercise.exercise }}
+                                                <span>
+                                                    <button type="button" class="btn btn-sm btn-primary add-set d-none d-md-inline" data-exercise-id="{{ exercise.id }}">Add Set</button>
+                                                    <button type="button" class="btn btn-sm btn-primary add-set d-md-none" data-exercise-id="{{ exercise.id }}">+ Set</button>
+                                                </span>
+                                            </h3>
+                                            <div id="sets_container_{{ exercise.id}}">
+                                                {% for set_info in exercise.set_data %}
+                                                <!-- Create a row for each set of inputs -->
+
+                                                <div class="row">
+                                                    <div class="col-3 col-md-2 mt-2">
+                                                        <div class="input-group">
+                                                            <label for="workoutName" class="form-label fw-bold ">Set {{set_info.set}}:</label>
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-9 col-md-4 mb-2">
+                                                        <div class="input-group mb-2">
+                                                            <span class="input-group-text">Weight</span>
+                                                            <input type="number" name="weight_{{ exercise.id }}[]" class="form-control" value="{{ set_info.weight }}" step="0.1">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <div class="input-group mb-2">
+                                                            <span class="input-group-text">Reps</span>
+                                                            <input type="number" name="reps_{{ exercise.id }}[]" class="form-control" value="{{ set_info.reps }}" placeholder="Reps">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6 col-md-3">
+                                                        <div class="input-group mb-2">
+                                                            <span class="input-group-text">Partials</span>
+                                                            <input type="number" name="partials_{{ exercise.id }}[]" class="form-control" value="{{ set_info.partials }}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% if not forloop.last %}
+                                                <div class="border-bottom mb-2"></div>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+  
+                                <div class="mb-5 mt-3 row">
+                                    <div class="col-8 col-md-6 ">
+                                        <div class="input-group mb-2 mb-md-0">
+                                            <span class="input-group-text d-md-none">Rate</span>
+                                            <span class="input-group-text d-none d-md-inline">Rating (1.0-10.0)</span>
+
+                                            <input type="number" name="rating" class="form-control rounded-right" placeholder="0.0" step="0.1" value="{{session.rating}}" required>
+                                            <img src="{% static 'images/9004759_star_favorite_award_like_icon.png' %}" alt="star Logo">
+                                        </div>
+                                    </div>
+                                       
+                                    <div class="col-4 col-md-3 d-grid gap-2 mb-2 mb-md-0  ">
+                                        <a href="{% url 'my_session' %}" class="btn btn-secondary">
+                                            <span class="">Cancel</span>
+                                        </a>
+                                    </div><!-- Save Workout Button spans 3 columns -->
+                                    <div class="col-12 col-md-3 d-grid gap-2">
+                                        <button type="submit" id="submit" class="btn btn-success w-100 w-md-auto">
+                                            Save
+                                        </button>
+                                    </div>
+
+
+
+                                
+
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                    <style> 
+                        .input-group img{
+                            margin-left: 10px !important;
+                            height:38px;
+                        }
+                    </style>
+
+                    <div class="col-12 col-lg-8 col-xl-6 mt-md-0 mt-2">
+                        <h1 class="fw-bolder mt-4 mt-md-2">New session</h1>
+                        <p class="lead fw-normal text-muted mb-4">Create a new session</p>
+                        <div class="btn_container">
+                            <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{% url 'create_session' %}">New</a>
+                        </div>
+
+                        <div class="card mt-5">
+                            <div class="card-body shadow">
+                                <div class="row">
+                                    <div class="col-md-6 mt-2">
+                                        <label for="poundsInput" class="form-label"><strong>Pounds (lbs)</strong></label>
+                                        <input type="number" id="poundsInput" class="form-control" placeholder="Weight in lbs">
+                                    </div>
+                                    <div class="col-md-6 mt-2 align-self-end">
+                                        <button onclick="convertPoundsToKg()" class="btn btn-primary">Convert to Kgs</button>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-md-12 mt-2">
+                                        <div id="result" class="alert alert-success" role="alert" style="display:none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+ 
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="row gx-5 justify-content-center">
+                <div class="col-lg-8 col-xl-6">
+
+                    <script>
+                        function toggleSessionDetails(event) {
+                            // Prevent the default action
+                            event.preventDefault();
+                            // Toggle the 'hidden' class on the .session-details element
+                            const details = event.target.closest('.session-container').querySelector('.session-details');
+                            details.classList.toggle('hidden');
+                        }
+
+                        function convertPoundsToKg() {
+                            var pounds = document.getElementById('poundsInput').value;
+                    
+                            console.log(pounds)
+                            if (pounds == ""){
+                                pounds=0
+                            }
+                            const kilograms = pounds * 0.45359237;
+                            const resultElement = document.getElementById('result');
+                            resultElement.style.display = 'block';
+                            resultElement.innerHTML = `<strong>${pounds} lbs</strong> is approximately <strong>${kilograms.toFixed(1)} kg</strong>.`;
+                        }
+                        $(document).ready(function() {
+                            $('.add-set').click(function() {
+                                console.log('hi')
+                                var exerciseId = $(this).data('exercise-id');
+                                var container = $('#sets_container_'+exerciseId);
+
+                                console.log(exerciseId, container)
+                                // Define the HTML structure for the new set of inputs with list-like names
+                                var newSetHtml = `
+                                    <div class="border-bottom mb-2"></div>
+                                    <div class="row">
+                                        <div class="col-12 col-md-4 mb-2">
+                                            <div class="input-group">
+                                                <span class="input-group-text">Weight</span>
+                                                <input type="number" name="weight_${exerciseId}[]" class="form-control" placeholder="0.0kg" step="0.1">
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-md-4">
+                                            <div class="input-group mb-2 mb-md-0">
+                                                <span class="input-group-text">Reps</span>
+                                                <input type="number" name="reps_${exerciseId}[]" class="form-control" placeholder="0">
+                                            </div>
+                                        </div>
+                                        <div class="col-6 col-md-4">
+                                            <div class="input-group">
+                                                <span class="input-group-text">Partials</span>
+                                                <input type="number" name="partials_${exerciseId}[]" class="form-control" placeholder="0">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                `;
+
+                                // Append the new set HTML to the container
+                                container.append(newSetHtml);
+                            });
+                        });
+                        
+                    </script>
+                    <style>
+                        .all_sessions{
+                            margin-top: 20px;
+                        }
+                        .session-header {
+                            padding-top: 10px;
+                            padding-bottom: 10px;
+                            background-color: #dddada;
+                            cursor: pointer;
+                            border-radius: 10px;
+                            margin-left: -20px;
+                            padding-left: 20px;
+                        }
+
+                        .session-header:hover {
+                            background-color: #aeaeae;
+                        }
+                        .session-details {
+                            padding-top: 10px;
+                            padding-bottom: 10px;
+                            background-color: #cee0ee;
+                            border-radius: 10px;
+                            margin-left: -20px;
+                            padding-left: 20px;
+                        }
+                        .session-container{
+                            margin-bottom: 10px;
+                        }
+
+                        .hidden {
+                            display: none;
+                        }
+
+                        .btn_container{
+                            margin-top: 30px;
+                        }
+                        p{
+                            margin-bottom: 0.5rem;
+                        }
+
+                    </style>
+
+                </div>
+            </div>
+
+        </div> 
+
+        
+        <!-- Contact cards-->
+
+    </div>
+{% endblock content %}

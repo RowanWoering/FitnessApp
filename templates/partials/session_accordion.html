@@ -1,0 +1,86 @@
+{% load static %}
+{% if sessions %}
+
+    {% for session, exercises in sessions %}
+    <div class="accordion-item">
+        <h3 class="accordion-header" id="heading{{ session.id }}">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ session.id }}" aria-expanded="false" aria-controls="collapse{{ session.id }}">
+                {{ session.name }} on {{ session.date }}
+            </button>
+        </h3>
+        <div class="accordion-collapse collapse" id="collapse{{ session.id }}" aria-labelledby="heading{{ session.id }}" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                {% for exercise in exercises %}
+                    <div class="fs-5"><strong>{{ exercise.exercise }}</strong></div>
+                    {% for set in exercise.set_info %}
+                    <div class="card mb-2">
+                        <div class="card-body p-2">
+                            <div class="row g-1 align-items-center">
+                                <div class="col-6 col-md-3">
+                                    <div class="fs-6"><strong>Set:</strong> {{ set.set }}</div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div>            
+                                        <span class="d-md-none">Wt:  {{ set.weight }}kg</span> <!-- Visible on xs to sm (mobile) -->
+                                        <span class="d-none d-md-inline">Weight: {{ set.weight }}kg</span>
+                                    </div>
+                        
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div>Reps: {{ set.reps }}</div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div>Partials: {{ set.partials }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                
+                
+                
+                
+                {% endfor %}
+                <div class=" mt-4">
+                    <div class="row align-items-center">
+                        <!-- Rating on the left -->
+                        <div class="col-12 col-md-6 mb-2 mb-md-0">
+                            <div class="d-flex align-items-center">
+                                <strong class="fs-5 me-2 small-on-mobile">Rating:</strong>
+                                <span class="fs-5 small-on-mobile">{{ session.rating }}</span>
+                                <img src="{% static 'images/9004759_star_favorite_award_like_icon.png' %}" alt="Star Logo" class="ms-2 image-small-on-mobile" style="width: 24px;">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <style>
+        .input-group img{
+            margin-left: 10px !important;
+            height:38px;
+        }
+        @media (max-width: 576px) { /* Targeting small devices */
+            .small-on-mobile {
+                font-size: 0.8rem; /* Smaller text on mobile */
+            }
+            .image-small-on-mobile {
+                width: 20px; /* Smaller image on mobile */
+            }
+        }
+    </style>
+    {% csrf_token %}
+    <script type="text/javascript">
+    var csrfToken = "{{ csrf_token }}";
+    </script>
+
+
+    {% endfor %}
+
+{% else %}
+    <p class="fst-italic text-muted"> You have no sessions saved for this month.</p>
+{% endif %}
