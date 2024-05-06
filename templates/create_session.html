@@ -25,21 +25,20 @@
                                 </div>
                                 <div class="card mb-4">
                                     <div class="card-body shadow">
+                                        {% if form.workout.field.queryset.exists %}
                                         <div class="row">
                                             <div class="col-md-7 mb-3">
                                                 <div class="input-group">
                                                     <span class="input-group-text">Workout</span>
                                                     <select id="id_workout" name="workout" class="form-select" required>
-                                                        {% if form.workout.field.queryset.exists %}
+
                                                             <option value="">---------</option>
                                                             {% for workout in form.workout.field.queryset %}
                                                                 <option value="{{ workout.pk }}" {% if form.workout.value|default_if_none:'' == workout.pk|stringformat:"s" %} selected {% endif %}>
                                                                     {{ workout.name }}
                                                                 </option>
                                                             {% endfor %}
-                                                        {% else %}
-                                                            <option value="">First create a workout</option>
-                                                        {% endif %}
+
                                                     </select>
 
                                                 </div>
@@ -55,6 +54,10 @@
                                         </div>
                                     
                                         <button type="submit" class="btn btn-primary mb-md-0">Create Session</button>
+                                        {% else %}
+                                        <p class="lead fw-normal text-muted mb-0">First create a workout to create a new session</p>
+                                        <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{% url 'create_workout' %}">New</a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </form>
