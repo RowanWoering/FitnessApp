@@ -11,19 +11,27 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import dj_database_url
+import psycopg2
+import environ
 
+
+env = environ.Env()
+environ.Env.read_env() 
+
+ENVIRONMENT = env('ENVIRONMENT', default='production')
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-a^^&ut11o^qshjn2rfn0j6nt(bsp9w^op2%+3cv72l@9yert9)'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://web-production-4f85.up.railway.app/']
+ALLOWED_HOSTS = ["127.0.0.1",'https://web-production-4f85.up.railway.app/']
 
 LOGIN_REDIRECT_URL = '/home/'
 LOGIN_URL = '/'
@@ -76,12 +84,27 @@ WSGI_APPLICATION = 'gymapp.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+
+POSTGRESS_LOCALLY=True
+
+if ENVIRONMENT=='production' or POSTGRESS_LOCALLY ==True:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'railway',
+            'USER': 'postgres',
+            'PASSWORD': 'WUBcbDEyEQmPvwxZGvqMbQjBGTzvGkin',
+            'HOST': 'monorail.proxy.rlwy.net',  # Typically 'localhost' or an IP address
+            'PORT': '29995',  # Default PostgreSQL port is 5432
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }   
 
 
 # Password validation

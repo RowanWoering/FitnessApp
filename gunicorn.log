@@ -1,0 +1,12 @@
+[2024-05-03 16:58:16 +0200] [12533] [INFO] Starting gunicorn 22.0.0
+[2024-05-03 16:58:16 +0200] [12533] [INFO] Listening at: http://127.0.0.1:8000 (12533)
+[2024-05-03 16:58:16 +0200] [12533] [INFO] Using worker: sync
+[2024-05-03 16:58:16 +0200] [12534] [INFO] Booting worker with pid: 12534
+[2024-05-05 17:07:28 +0200] [12533] [CRITICAL] WORKER TIMEOUT (pid:12534)
+[2024-05-05 15:07:28 +0000] [12534] [INFO] Worker exiting (pid: 12534)
+[2024-05-05 17:07:31 +0200] [12533] [ERROR] Worker (pid:12534) exited with code 1
+[2024-05-05 17:07:31 +0200] [12533] [ERROR] Worker (pid:12534) exited with code 1.
+[2024-05-05 17:07:31 +0200] [14641] [INFO] Booting worker with pid: 14641
+[2024-05-06 09:58:28 +0200] [12533] [INFO] Handling signal: int
+[2024-05-06 07:58:28 +0000] [14641] [INFO] Worker exiting (pid: 14641)
+[2024-05-06 09:58:29 +0200] [12533] [INFO] Shutting down: Master
