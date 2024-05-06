@@ -108,7 +108,7 @@ def home_view(request):
 @login_required
 def create_workout_view(request):
     form = ExerciseForm()
-    exercise_lst = ExerciseList.objects.all()
+    exercise_lst = ExerciseList.objects.all().order_by('name')
     custom_exercise_lst = CustomExerciseList.objects.all()
     exercise_tuple=[]
     for i in range(len(exercise_lst)):
@@ -172,7 +172,7 @@ def edit_workout(request, workout_id=None):
         return redirect('my_workout')
 
     else:
-        all_exercises = ExerciseList.objects.all()
+        all_exercises = ExerciseList.objects.all().order_by('name')
         all_custom_exercises = CustomExerciseList.objects.all()
         #all_exercises = ['Push-up', 'Pull-up', 'Squat', 'Lunge']
         exercises = workout.exercise_set.all() if workout else None
