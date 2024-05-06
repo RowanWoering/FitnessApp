@@ -53,7 +53,7 @@ def login_view(request):
                 return redirect('home')  # Redirect to home page or dashboard
             else:
                 # Return an 'invalid login' error messages
-                print('fout')
+
                 return render(request, 'index1.html', {'error_log': 'Invalid login credentials.'})
     return render(request, 'index1.html')
 
@@ -113,7 +113,7 @@ def create_workout_view(request):
     exercise_tuple=[]
     for i in range(len(exercise_lst)):
         exercise_tuple.append((i,exercise_lst[i]))
-    print(exercise_tuple)
+
     # Your home page logic here
     return render(request, 'create_workout.html',{'form': form,  'exercise_lst': exercise_lst, "custom_exercise_lst": custom_exercise_lst})
 
@@ -125,7 +125,7 @@ def my_workout_view(request):
         exercises = workout.exercise_set.all()
         context.append((workout,exercises))
 
-    print(workouts)
+
     return render(request, 'my_workout.html',{'workouts': workouts, 'context': context})
 
 def add_custom_exercise(request):
@@ -176,7 +176,7 @@ def edit_workout(request, workout_id=None):
         all_custom_exercises = CustomExerciseList.objects.all()
         #all_exercises = ['Push-up', 'Pull-up', 'Squat', 'Lunge']
         exercises = workout.exercise_set.all() if workout else None
-        print(exercises[0])
+
         return render(request, 'edit_workout.html', {'workout': workout, 'exercises': exercises, 'all_exercises':all_exercises,'all_custom_exercises':all_custom_exercises})
 
 
@@ -311,7 +311,7 @@ def create_session(request):
 
     if request.method == 'POST':
         data = request.POST
-        print(data)
+
 
         form = SessionForm(request.POST, user=request.user)
 
@@ -330,11 +330,11 @@ def create_session(request):
 @login_required
 def add_details(request, session_id):
     session = get_object_or_404(Session, id=session_id, user=request.user)
-    print(session)
+
     exercises = session.workout.exercise_set.all()  # Adjust based on your related_name or model structure
-    print(exercises)
+
     for exercise in exercises:
-        print(exercise.exercise)
+
         exercise.range_sets = range(1, exercise.sets+1)
 
 
@@ -393,7 +393,7 @@ def edit_session(request, session_id=None):
             partials_lst = request.POST.getlist(f'partials_{exercise.id}[]')
             reps_lst = request.POST.getlist(f'reps_{exercise.id}[]')
             sets = exercise.set_list.all()
-            print(sets, weight_lst, partials_lst, reps_lst)
+
             for i in range(len(weight_lst)):
                 # Check if a set exists for this index
                 if i < len(sets):
@@ -476,9 +476,9 @@ def list_friends(request):
 def send_friend_request(request, user_id):
     from_user = request.user
     to_user = get_object_or_404(User, id=user_id)
-    print('yo')
+
     if from_user != to_user:
-        print('hi')
+
         friend_request, created = FriendRequest.objects.get_or_create(sender=from_user, receiver=to_user)
         # Optional: Notify the user or do something if already created
     return redirect('list_friends')  # Adjust this to your needs
@@ -527,7 +527,7 @@ def view_friend_workout(request, user_id):
     all_custom_exercises = CustomExerciseList.objects.all()
     exercises_with_progression = Progression.objects.filter(user=user).values_list('exercise', flat=True).distinct()
     exercises_with_prs = PersonalRecord.objects.filter(user=user).values_list('exercise', flat=True).distinct()
-    print(exercises_with_prs)
+
     # Check if the current user is friends with the user whose workouts they want to view
     if Friendship.objects.filter(creator=request.user, friend=user).exists() or Friendship.objects.filter(creator=user, friend=request.user).exists():
         workouts = WorkoutName.objects.filter(user=user).order_by('-id')  # Assuming your Workout model has a 'user' field
@@ -853,13 +853,14 @@ def food_view(request):
 
 @login_required
 def exercises(request):
-    muscle_groups = ExerciseList.objects.values_list('muscle_group', flat=True).distinct()
-    print(muscle_groups)
+    muscle_groups = ExerciseList.objects.values_list('muscle_group', flat=True).distinct().order_by('muscle_group')
+
+
     if request.method == 'POST':
         exercises_by_equipment = {}
         muscle_group = request.POST.get('muscle_group')
 
-        exercises = ExerciseList.objects.filter(muscle_group=muscle_group).order_by('equipment')
+        exercises = ExerciseList.objects.filter(muscle_group=muscle_group).order_by('equipment', 'name')
 
         for exercise in exercises:
             if exercise.equipment in exercises_by_equipment:
@@ -893,7 +894,7 @@ def profile(request):
 
 @login_required
 def update_muscle(request):
-    print('hihi')
+
     if request.method == 'POST':
 
         BodyMetric.objects.create(
@@ -1017,7 +1018,7 @@ def update_profile_picture(request):
 
 @login_required
 def settings_view(request):
-    print(request.user.setting_view)
+
     usersettings = UserSettings.objects.get(user=request.user)
 
     if request.method == 'POST':
