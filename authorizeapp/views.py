@@ -462,7 +462,7 @@ def delete_session(request, session_id):
 
 def list_friends(request):
     user_id = request.user.id
-    all_users = User.objects.exclude(id=user_id)  # Exclude the current user
+    all_users = User.objects.exclude(id=user_id).exclude(is_superuser=True)
 
     # Retrieve all friendships involving the current user
     friendships = Friendship.objects.filter(creator_id=user_id) | Friendship.objects.filter(friend_id=user_id)
