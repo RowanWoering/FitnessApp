@@ -28,10 +28,26 @@ def login_view(request):
             username = request.POST['username']
             name = request.POST['name']
             password = request.POST['password']
-            if User.objects.filter(username=username).exists():
-            # If username is taken, inform the user and render the signup form again
+            password_confirm = request.POST.get('password_confirm')
 
-                return render(request, 'index.html', {'error_sub': 'Username already in use', 'state':'signup'})  # Adjust 'signup.html' to your signup template
+            # Check if both passwords match
+            context = {
+                'username': username,  # Always return the username
+                'name': name,  # Always return the name
+                'state':True
+            }
+
+            # Check if both passwords match
+            if password != password_confirm:
+                context['error_sub'] = 'Passwords do not match.'
+                context['reset_password'] = True  # Signal to reset only the password fields
+                return render(request, 'index1.html', context)
+
+            if User.objects.filter(username=username).exists():
+                context['error_sub'] = 'Username already in use.'
+                context['reset_username'] = True  # Signal to reset the username and password
+                context['username'] = ''
+                return render(request, 'index1.html', context)
 
             user = User.objects.create_user(username=username, password=password)
             user.first_name= name
