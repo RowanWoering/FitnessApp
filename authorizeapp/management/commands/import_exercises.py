@@ -6,6 +6,9 @@ class Command(BaseCommand):
     help = 'Populate exercises from Excel file'
 
     def handle(self, *args, **kwargs):
+        if ExerciseList.objects.exists():
+            self.stdout.write(self.style.SUCCESS('Exercises already populated.'))
+            return
         wb = load_workbook('Corrected_Gym_Exercises.xlsx')
         ws = wb.active
 
