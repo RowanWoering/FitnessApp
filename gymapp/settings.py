@@ -31,7 +31,8 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1",'https://web-production-4f85.up.railway.app/']
+ALLOWED_HOSTS = ["127.0.0.1",'localhost', 'fitnessapp-production-f544.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://fitnessapp-production-f544.up.railway.app']
 
 LOGIN_REDIRECT_URL = '/home/'
 LOGIN_URL = '/'
