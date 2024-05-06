@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'gymapp.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-POSTGRESS_LOCALLY=True
+POSTGRESS_LOCALLY=False
 
 if ENVIRONMENT=='production' or POSTGRESS_LOCALLY ==True:
     DATABASES = {

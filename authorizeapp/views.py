@@ -308,6 +308,7 @@ def my_sessions(request):
 
 @login_required
 def create_session(request):
+
     if request.method == 'POST':
         data = request.POST
         print(data)
@@ -365,8 +366,7 @@ def add_details(request, session_id):
 
         # Process submitted exercise details here
         # You might manually process each field in the POST data or use formsets
-        rating = request.POST.get('rating') if request.POST.get('rating') else None
-        session.rating = rating
+        session.rating = request.POST.get('rating') if request.POST.get('rating') else None
         session.save()
         return redirect('my_session')  # or wherever you want to redirect to after saving
 
@@ -420,7 +420,7 @@ def edit_session(request, session_id=None):
                     check_and_update_pr(session.user, exercise.exercise, new_set.reps, float(new_set.weight), session)
                     calculate_progression_index(session.user, exercise.exercise, session)
 
-        session.rating = request.POST.get('rating')
+        session.rating = request.POST.get('rating') if request.POST.get('rating') else None
         session.save()
         return redirect('my_session')
 

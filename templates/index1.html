@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log in</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{% static 'styles.css' %}">
 </head>
 <body>
@@ -21,15 +22,15 @@
         
             <div class="login_container">
                 <div class="row justify-content-center">
-                    <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+                    <div class="col-12">
                         <div class="form-container-custom">
                             {% if state %}
                                 <div class="form-structor">
                     
                                     <form method="post" class="signup">
                                         {% csrf_token %}
-                                        <h2 class="form-title" id="signup">Sign up</h2>
-                                        <div class="form-holder">
+                                        <h2 class="form-title mt-2" id="signup">Sign ups</h2>
+                                        <div class="form-holder mt-5">
                                             <input type="text" class="input" placeholder="User Name" name="username" required/>
                                             <input type="text" class="input" placeholder="Name" name="name" required/>
                                             <input type="password" class="input" placeholder="Password" name="password" required/>
@@ -44,7 +45,7 @@
                                         {% csrf_token %}
                                         <div class="center">
                                             <h2 class="form-title" id="login">Log in</h2>
-                                            <div class="form-holder">
+                                            <div class="form-holder mt-5">
                                                 <input type="text" class="input" placeholder="User Name" name="username" required/>
                                                 <input type="password" class="input" placeholder="Password" name="password" required/>
                                             </div>
@@ -62,8 +63,8 @@
                     
                                     <form method="post" class="signup slide-up">
                                         {% csrf_token %}
-                                        <h2 class="form-title" id="signup">Sign up</h2>
-                                        <div class="form-holder">
+                                        <h2 class="form-title mb-0 mt-md-2 mt-0" id="signup">Sign up</h2>
+                                        <div class="form-holder mt-5">
                                             <input type="text" class="input" placeholder="User Name" name="username" />
                                             <input type="text" class="input" placeholder="First name" name="name" />
                                             <input type="password" class="input" placeholder="Password" name="password" />
@@ -75,7 +76,7 @@
                                         {% csrf_token %}
                                         <div class="center">
                                             <h2 class="form-title" id="login">Log in</h2>
-                                            <div class="form-holder">
+                                            <div class="form-holder mt-5">
                                                 <input type="text" class="input" placeholder="User Name" name="username"/>
                                                 <input type="password" class="input" placeholder="Password" name="password"/>
                                             </div>

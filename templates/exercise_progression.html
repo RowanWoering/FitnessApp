@@ -5,7 +5,7 @@
 {% block title %}Progression{% endblock title %}
 
 {% block content %}
-    <div class="container px-md-5 px-4">
+    <div class="container px-md-5 px-3">
         <div class="bg-light rounded-3 py-md-5 py-4 px-md-5 px-4">
             <div class="">
                 <div class="row gx-5 justify-content-center">
@@ -44,7 +44,7 @@
                                 </div>
                             </form>
                             <div class="card mb-md-0 mb-4">
-                                <div class="card-body">
+                                <div class="card-body p-1 p-md-2">
                                 <canvas id="progressionChart"></canvas>
                                 </div>
                             </div>
@@ -85,7 +85,7 @@
                                 </div>
                             </form>
                             <div class="card mb-5">
-                                <div class="card-body">
+                                <div class="card-body p-1 p-md-2">
                                 <canvas id="progressionChart1"></canvas>
                                 </div>
                             </div>
@@ -131,7 +131,8 @@
                                         </div>
                                         <div class="col-4 col-sm-4">
                                             <div class="btn-container">
-                                                <button type="submit" class="btn btn-primary">Add PR</button>
+                                                <button type="submit" class="btn btn-sm btn-primary d-none d-md-inline">Add PR</button>
+                                                <button type="submit" class="btn btn-primary d-md-none">Add</button>
                                             </div>
                                         </div>
                                     </div>
@@ -350,7 +351,7 @@
                                 options: {   
                                     responsive: true,
                                     maintainAspectRatio: true,
-                                    aspectRatio: 1.5,
+                                    aspectRatio: 1.2,
                                     scales: {
                                         x: {  // Use 'x' instead of 'xAxes' for Chart.js version 3+
 
@@ -399,7 +400,7 @@
                                 options: {   
                                     responsive: true,
                                     maintainAspectRatio: true,
-                                    aspectRatio: 1.5,
+                                    aspectRatio: 1.2,
                                     scales: {
                                         x: {  // Use 'x' instead of 'xAxes' for Chart.js version 3+
 

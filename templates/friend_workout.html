@@ -5,14 +5,14 @@
 {% block title %}{{ friend.first_name }}'s Profile{% endblock title %}
 
 {% block content %}
-    <div class="container px-md-5 px-4">
+    <div class="container px-md-5 px-3">
         <!-- Contact form-->
         <div class="bg-light rounded-3 py-md-5 py-4 px-md-5 px-4">
             <div class="">
                 <div class="row gx-5 justify-content-center mb-2">
                     
                     <div class="col-lg-12 col-xl-6 custom-border">
-                        <h1 class="fw-bolder mb-3 fs-1">{{ friend.first_name }}'s Profile</h1>
+                        <h1 class="fw-bolder mb-3 fs-1">{{ friend.username }}'s Profile</h1>
                         <div class="card mb-5 justify-content-between">
                             <div class="row g-0">
                                 <div class="img_cont col-12 col-md-5 justify-content-md-start justify-content-center d-flex mt-md-0 mt-3">
@@ -47,7 +47,7 @@
 
                     <div class="col-lg-8 col-xl-6 mt-md-0 mt-2">
                         <h1 class="fw-bolder mt-4 mt-md-2">Workouts</h1>
-                        <p class="lead fw-normal text-muted mb-4">Check out their workouts. You can also select a workout to copy. The copied workout will appear in your workouts under the name {{ friend.username }}'s 'workout name' (copy)</p>
+                        <p class="lead fw-normal text-muted mb-4">Check out their workouts. If you copy a workout, you can find it in your workouts under the name {{ friend.first_name }}'s 'workout name' (copy)</p>
                         <div class="gx-5 justify-content-center mb-3">
                             <div class="all_workouts">
                                 <div class="accordion mb-5" id="accordionExample">
@@ -120,292 +120,292 @@
 
                 </div>
                 {% if settings.show_sessions %}
-                    <div class="row gx-5 border-top mb-2"></div>
+                <div class="row gx-5 border-top mb-2"></div>
 
-                    <div class="row gx-5 justify-content-center mb-2">
-                        <div class="col-12 col-lg-8 col-xl-6 custom-border">
-                            <h1 class="fw-bolder mt-4">Past Sessions</h1>
-                            <p class="lead fw-normal text-muted mb-3">Check out your last sessions</p>
-                            <div class="mt-4 justify-content-end">
-                                <form method="post" id="monthform">
-                                    {% csrf_token %}
-                                    <div class="row d-flex">
-                                        <div class="mb-3 col-6 col-md-4">
-                                            <div class="input-group">
-                                                <span class="input-group-text d-md-none rounded-left">Y</span>
-                                                <span class="input-group-text d-none d-md-inline rounded-left">Year</span>
+                <div class="row gx-5 justify-content-center mb-2">
+                    <div class="col-12 col-lg-8 col-xl-6 custom-border">
+                        <h1 class="fw-bolder mt-4">Past Sessions</h1>
+                        <p class="lead fw-normal text-muted mb-3">Check out your last sessions</p>
+                        <div class="mt-4 justify-content-end">
+                            <form method="post" id="monthform">
+                                {% csrf_token %}
+                                <div class="row d-flex">
+                                    <div class="mb-3 col-6 col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text d-md-none rounded-left">Y</span>
+                                            <span class="input-group-text d-none d-md-inline rounded-left">Year</span>
 
-                                                <select name="year" id="id_year" class="form-select">
-                                                    {% for year, name in years %}
-                                                    <option value="{{ year }}" {% if year == current_year %}selected{% endif %}>{{ name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-
-                                        </div>
-                                        <div class="mb-3 col-6 col-md-4">
-                                            <div class="input-group">
-                                                <span class="input-group-text d-md-none rounded-left">M</span>
-                                                <span class="input-group-text d-none d-md-inline rounded-left">Month</span>
-
-                                                <select name="month" id="id_month" class="form-select">
-                                                    {% for month, name in months %}
-                                                    <option value="{{ month }}" {% if month == current_month %}selected{% endif %}>{{ name }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-
-                                        </div>
-                                        <div class="col-12 col-md-4 d-grid mb-3 align-items-center justify-md-content-end">
-                                            <button type="submit" class="btn btn-primary ">Filter Sessions</button>
+                                            <select name="year" id="id_year" class="form-select">
+                                                {% for year, name in years %}
+                                                <option value="{{ year }}" {% if year == current_year %}selected{% endif %}>{{ name }}</option>
+                                                {% endfor %}
+                                            </select>
                                         </div>
 
                                     </div>
+                                    <div class="mb-3 col-6 col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text d-md-none rounded-left">M</span>
+                                            <span class="input-group-text d-none d-md-inline rounded-left">Month</span>
 
-                                </form>
-                            </div>
-                            <div class="gx-5 justify-content-center form-floating mb-3">
-                                <div class="all_sessions">
-                                    <div class="accordion mb-5" id="accordionExample1">
-                                        {% if sessions %}
-                                    
-                                            {% for session, exercises in sessions %}
-                                            <div class="accordion-item">
-                                                <h3 class="accordion-header" id="heading{{ session.id }}">
-                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ session.id }}" aria-expanded="false" aria-controls="collapse{{ session.id }}">
-                                                        {{ session.name }} on {{ session.date }}
-                                                    </button>
-                                                </h3>
-                                                <div class="accordion-collapse collapse" id="collapse{{ session.id }}" aria-labelledby="heading{{ session.id }}" data-bs-parent="#accordionExample">
-                                                    <div class="accordion-body">
-                                                        {% for exercise in exercises %}
-                                                            <div class="fs-5"><strong>{{ exercise.exercise }}</strong></div>
-                                                            {% for set in exercise.set_info %}
-                                                            <div class="card mb-2">
-                                                                <div class="card-body p-2">
-                                                                    <div class="row g-1 align-items-center">
-                                                                        <div class="col-6 col-md-3">
-                                                                            <div class="fs-6"><strong>Set:</strong> {{ set.set }}</div>
+                                            <select name="month" id="id_month" class="form-select">
+                                                {% for month, name in months %}
+                                                <option value="{{ month }}" {% if month == current_month %}selected{% endif %}>{{ name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-12 col-md-4 d-grid mb-3 align-items-center justify-md-content-end">
+                                        <button type="submit" class="btn btn-primary ">Filter Sessions</button>
+                                    </div>
+
+                                </div>
+
+                            </form>
+                        </div>
+                        <div class="gx-5 justify-content-center form-floating mb-3">
+                            <div class="all_sessions">
+                                <div class="accordion mb-5" id="accordionExample1">
+                                    {% if sessions %}
+                                
+                                        {% for session, exercises in sessions %}
+                                        <div class="accordion-item">
+                                            <h3 class="accordion-header" id="heading{{ session.id }}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ session.id }}" aria-expanded="false" aria-controls="collapse{{ session.id }}">
+                                                    {{ session.name }} on {{ session.date }}
+                                                </button>
+                                            </h3>
+                                            <div class="accordion-collapse collapse" id="collapse{{ session.id }}" aria-labelledby="heading{{ session.id }}" data-bs-parent="#accordionExample">
+                                                <div class="accordion-body">
+                                                    {% for exercise in exercises %}
+                                                        <div class="fs-5"><strong>{{ exercise.exercise }}</strong></div>
+                                                        {% for set in exercise.set_info %}
+                                                        <div class="card mb-2">
+                                                            <div class="card-body p-2">
+                                                                <div class="row g-1 align-items-center">
+                                                                    <div class="col-6 col-md-3">
+                                                                        <div class="fs-6"><strong>Set:</strong> {{ set.set }}</div>
+                                                                    </div>
+                                                                    <div class="col-6 col-md-3">
+                                                                        <div>            
+                                                                            <span class="d-md-none">Wt:  {{ set.weight }}kg</span> <!-- Visible on xs to sm (mobile) -->
+                                                                            <span class="d-none d-md-inline">Weight: {{ set.weight }}kg</span>
                                                                         </div>
-                                                                        <div class="col-6 col-md-3">
-                                                                            <div>            
-                                                                                <span class="d-md-none">Wt:  {{ set.weight }}kg</span> <!-- Visible on xs to sm (mobile) -->
-                                                                                <span class="d-none d-md-inline">Weight: {{ set.weight }}kg</span>
-                                                                            </div>
-                                                            
-                                                                        </div>
-                                                                        <div class="col-6 col-md-3">
-                                                                            <div>Reps: {{ set.reps }}</div>
-                                                                        </div>
-                                                                        <div class="col-6 col-md-3">
-                                                                            <div>Partials: {{ set.partials }}</div>
-                                                                        </div>
+                                                        
+                                                                    </div>
+                                                                    <div class="col-6 col-md-3">
+                                                                        <div>Reps: {{ set.reps }}</div>
+                                                                    </div>
+                                                                    <div class="col-6 col-md-3">
+                                                                        <div>Partials: {{ set.partials }}</div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            {% endfor %}
-                                                        
-                                                        
-                                                        
-                                                        
+                                                        </div>
                                                         {% endfor %}
-                                                        <div class=" mt-4">
-                                                            <div class="row align-items-center">
-                                                                <!-- Rating on the left -->
-                                                                <div class="col-12 col-md-6 mb-2 mb-md-0">
-                                                                    <div class="d-flex align-items-center">
-                                                                        <strong class="fs-5 me-2 small-on-mobile">Rating:</strong>
-                                                                        <span class="fs-5 small-on-mobile">{{ session.rating }}</span>
-                                                                        <img src="{% static 'images/9004759_star_favorite_award_like_icon.png' %}" alt="Star Logo" class="ms-2 image-small-on-mobile" style="width: 24px;">
-                                                                    </div>
+                                                    
+                                                    
+                                                    
+                                                    
+                                                    {% endfor %}
+                                                    <div class=" mt-4">
+                                                        <div class="row align-items-center">
+                                                            <!-- Rating on the left -->
+                                                            <div class="col-12 col-md-6 mb-2 mb-md-0">
+                                                                <div class="d-flex align-items-center">
+                                                                    <strong class="fs-5 me-2 small-on-mobile">Rating:</strong>
+                                                                    <span class="fs-5 small-on-mobile">{{ session.rating }}</span>
+                                                                    <img src="{% static 'images/9004759_star_favorite_award_like_icon.png' %}" alt="Star Logo" class="ms-2 image-small-on-mobile" style="width: 24px;">
                                                                 </div>
-
                                                             </div>
+
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            
-                                            <style>
-                                                .input-group img{
-                                                    margin-left: 10px !important;
-                                                    height:38px;
+                                        
+                                        <style>
+                                            .input-group img{
+                                                margin-left: 10px !important;
+                                                height:38px;
+                                            }
+                                            @media (max-width: 576px) { /* Targeting small devices */
+                                                .small-on-mobile {
+                                                    font-size: 0.8rem; /* Smaller text on mobile */
                                                 }
-                                                @media (max-width: 576px) { /* Targeting small devices */
-                                                    .small-on-mobile {
-                                                        font-size: 0.8rem; /* Smaller text on mobile */
-                                                    }
-                                                    .image-small-on-mobile {
-                                                        width: 20px; /* Smaller image on mobile */
-                                                    }
+                                                .image-small-on-mobile {
+                                                    width: 20px; /* Smaller image on mobile */
                                                 }
+                                            }
 
-                                            </style>
-                                            {% csrf_token %}
-                                            <script type="text/javascript">
-                                            var csrfToken = "{{ csrf_token }}";
-                                            </script>
+                                        </style>
+                                        {% csrf_token %}
+                                        <script type="text/javascript">
+                                        var csrfToken = "{{ csrf_token }}";
+                                        </script>
 
 
-                                            {% endfor %}
-        
-                                        {% else %}
-                                            <p>They have no sessions saved.</p>
-                                        {% endif %}
-                                    </div>
-
+                                        {% endfor %}
+    
+                                    {% else %}
+                                        <p>They have no sessions saved.</p>
+                                    {% endif %}
                                 </div>
 
                             </div>
-                        </div>
-
-                        <div class="col-lg-8 col-xl-6 mt-md-0 mt-2">
-                            <h1 class="fw-bolder mt-4">Session statistics</h1>
-                            <p class="lead fw-normal text-muted mb-4">See {{ friend.username }}'s overall session statistics</p>
-                            <div class="card">
-                                {% if stats_available %}
-                                    <div class="card-body shadow">
-                                        <div class="mt-4 mb-5 justify-content-end">
-                                            {% for timeframe, stats in workout_stats.items %}
-
-                                            {% if stats %}
-                                            <h3 class="mb-2">{{ timeframe|title }}:</h3>
-                                                <table class="table mb-3">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="text-center">Workout Type</th>
-                                                            <th class="text-center">Session Count</th>
-                                                            <th class="text-center">Avg Rating</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {% for stat in stats %}
-                                                            <tr>
-                                                                <td class="text-center">{{ stat.name }}</td>
-                                                                <td class="text-center">{{ stat.session_count }}</td>
-                                                                <td class="text-center">{{ stat.avg_rating }}</td>
-                                                            </tr>
-                                                        {% endfor %}
-                                                    </tbody>
-                                                </table>
-                                            {% else %}
-
-                                            {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    <div class="card-body shadow">
-                                        <p class="mb-0 fst-italic text-muted">No stats yet</p>
-                                    </div>
-                                {% endif %}
-                            <!-- <div class="btn_container">
-                                <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{% url 'create_workout' %}">New</a>
-                            </div> -->
 
                         </div>
-
                     </div>
+
+                    <div class="col-lg-8 col-xl-6 mt-md-0 mt-2">
+                        <h1 class="fw-bolder mt-4">Session statistics</h1>
+                        <p class="lead fw-normal text-muted mb-4">See {{ friend.username }}'s overall session statistics</p>
+                        <div class="card mb-4">
+
+                            {% if stats_available %}
+                                <div class="card-body shadow">
+                                    <div class="mt-2 mb-2 justify-content-end">
+                                        {% for timeframe, stats in workout_stats.items %}
+
+                                        {% if stats %}
+                                        <h3 class="mb-2">{{ timeframe|title }}:</h3>
+                                            <table class="table mb-3">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="text-center">Workout Type</th>
+                                                        <th class="text-center">Session Count</th>
+                                                        <th class="text-center">Avg Rating</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for stat in stats %}
+                                                        <tr>
+                                                            <td class="text-center">{{ stat.name }}</td>
+                                                            <td class="text-center">{{ stat.session_count }}</td>
+                                                            <td class="text-center">{{ stat.avg_rating }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        {% else %}
+
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="card-body shadow ">
+                                    <p class="mb-0 fst-italic text-muted">No stats yet</p>
+                                </div>
+                            {% endif %}
+                        <!-- <div class="btn_container">
+                            <a class="btn btn-primary btn-lg px-4 me-sm-3" href="{% url 'create_workout' %}">New</a>
+                        </div> -->
+                        </div>
+                    </div>
+
+                </div>
                 {% endif %}
                 {% if settings.show_progress %}
-                    <div class="row gx-5 border-top mb-2"></div>
-                    <div class="row gx-5 justify-content-center">
-                        <div class="col-lg-8 col-xl-6 custom-border">
-                            <h1 class="fw-bolder mt-4">{{ friend.first_name }}'s Progression</h1>
-                            <p class="lead fw-normal text-muted mb-4">Check out the progression of {{ friend.first_name }}. First select an exercise and then select how you want to view the progression: progression index or over time. You can also show your own progression on that exercise</p>
-                            <form id="answer-form" method="post" name="testform" action="{% url 'plot_friend' user_id=friend.id %}" >
-                                {% csrf_token %}
-                                <div class="row align-items-center mb-4 g-2 justify-content-between">
-                                    <div class="col-6 col-sm-4 ">
-                                        <div class="mb-2 mb-sm-0">
-            
-                                            <select class="exercise-dropdown form-select" id="exercise-dropdown" name="exercise" class="form-select" required>
-                                                <option value=""> None </option>
-                                                {% for exercise in exercises %}
-                                                <option value="{{ exercise }}">{{ exercise }}</option>
-                                                {% endfor %}
-                                            
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-sm-3 mb-2 mb-sm-0">
-                                        <select class="exercise-dropdown form-select" id="exercise-dropdown1" name="progression" class="form-select" required>
-                                            <option value="Progression Index"> Progression Index </option>
-                                            <option value="Progression Over Time"> Progression Over Time </option>
-            
+                <div class="row gx-5 border-top mb-2"></div>
+                <div class="row gx-5 justify-content-center">
+                    <div class="col-lg-8 col-xl-6 custom-border">
+                        <h1 class="fw-bolder mt-4">{{ friend.first_name }}'s Progression</h1>
+                        <p class="lead fw-normal text-muted mb-4">Check out {{ friend.first_name }}'s progress for all their exercises. You can compare your progression to them as well!</p>
+                        <form id="answer-form" method="post" name="testform" action="{% url 'plot_friend' user_id=friend.id %}" >
+                            {% csrf_token %}
+                            <div class="row align-items-center mb-4 g-2 justify-content-between">
+                                <div class="col-6 col-sm-4 ">
+                                    <div class="mb-2 mb-sm-0">
+        
+                                        <select class="exercise-dropdown form-select" id="exercise-dropdown" name="exercise" class="form-select" required>
+                                            <option value=""> None </option>
+                                            {% for exercise in exercises %}
+                                            <option value="{{ exercise }}">{{ exercise }}</option>
+                                            {% endfor %}
+                                        
                                         </select>
                                     </div>
-                                    <div class="col-6 col-sm-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="myProgressionCheckbox" name="my_progression">
-                                            <label class="form-check-label" for="myprogressionCheckbox">My progress</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-sm-2">
-                                        <div class="btn-container">
-                                            <button type="submit" class="btn btn-primary">Show</button>
-                                        </div>
-            
+                                </div>
+                                <div class="col-6 col-sm-3 mb-2 mb-sm-0">
+                                    <select class="exercise-dropdown form-select" id="exercise-dropdown1" name="progression" class="form-select" required>
+                                        <option value="Progression Index"> Progression Index </option>
+                                        <option value="Progression Over Time"> Progression Over Time </option>
+        
+                                    </select>
+                                </div>
+                                <div class="col-6 col-sm-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="myProgressionCheckbox" name="my_progression">
+                                        <label class="form-check-label" for="myprogressionCheckbox">My progress</label>
                                     </div>
                                 </div>
-                            </form>
-                            <div class="card mb-5">
-                                <div class="card-body">
-                                <canvas id="progressionChart"></canvas>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div class="col-12 col-lg-8 col-xl-6 mt-md-0 mt-2">
-                            <h1 class="fw-bolder mt-4">{{ friend.first_name }}'s PRs</h1>
-                            <p class="lead fw-normal text-muted mb-4">Check out the personal records of {{ friend.first_name }}. First select an exercise and then select the number 
-                                                                        of reps to find your personal weight record over time. You can also show your own PR on that exercise</p>
-                            <form id="answer-form1" method="post" name="testform" action="{% url 'plot_prs_friend' user_id=friend.id %}" >
-                                {% csrf_token %}
-                                <div class="row align-items-center g-3 mb-4 justify-content-between">
-                                    <div class="col-6 col-sm-4">
-                                        <div class="mb-sm-0">
-                                            <select class="exercise-dropdown form-select" id="exercise-dropdown2" name="exercise" class="form-select" required>
-                                                <option value="" aria-placeholder="Exercise"> None </option>
-                                                {% for exercise in exercises1 %}
-                                                <option value="{{ exercise }}">{{ exercise }}</option>
-                                                {% endfor %}
-            
-                                            </select>
-                                        </div>
+                                <div class="col-6 col-sm-2">
+                                    <div class="btn-container">
+                                        <button type="submit" class="btn btn-primary">Show</button>
                                     </div>
-                                    <div class="col-6 col-sm-3
-                                    mb-sm-0">
-                                        <!-- Reps Select (to be dynamically filled) -->
-                                        <select class="rep-dropdown form-select" id="reps-dropdown" name="reps" required>
-                                            <option value="">Select Reps</option>
-                                            <!-- Options will be added here based on the selected exercise -->
-                                        </select>
-                                    </div>
-                                    <div class="col-6 col-sm-3">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="myPRsCheckbox" name="my_prs">
-                                            <label class="form-check-label" for="myPRsCheckbox">My PR</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-6 col-sm-2 ">
-                                        <div class="btn-container">
-                                            <button type="submit" class="btn btn-primary">Show</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
-                            <div class="card mb-3">
-                                <div class="card-body">
-                                <canvas id="progressionChart1"></canvas>
+        
                                 </div>
                             </div>
+                        </form>
+                        <div class="card mb-5">
+                            <div class="card-body p-1 p-md-2">
+                            <canvas id="progressionChart"></canvas>
+                            </div>
                         </div>
-
-
 
                     </div>
+                    <div class="col-12 col-lg-8 col-xl-6 mt-md-0 mt-2">
+                        <h1 class="fw-bolder mt-4">{{ friend.first_name }}'s PRs</h1>
+                        <p class="lead fw-normal text-muted mb-4">Check out {{ friend.first_name }}'s PRs for all their exercises and reps. You can compare your PRs to theirs as well!</p>
+                        <form id="answer-form1" method="post" name="testform" action="{% url 'plot_prs_friend' user_id=friend.id %}" >
+                            {% csrf_token %}
+                            <div class="row align-items-center g-3 mb-4 justify-content-between">
+                                <div class="col-6 col-sm-4">
+                                    <div class="mb-sm-0">
+                                        <select class="exercise-dropdown form-select" id="exercise-dropdown2" name="exercise" class="form-select" required>
+                                            <option value="" aria-placeholder="Exercise"> None </option>
+                                            {% for exercise in exercises1 %}
+                                            <option value="{{ exercise }}">{{ exercise }}</option>
+                                            {% endfor %}
+        
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-3
+                                mb-sm-0">
+                                    <!-- Reps Select (to be dynamically filled) -->
+                                    <select class="rep-dropdown form-select" id="reps-dropdown" name="reps" required>
+                                        <option value="">Select Reps</option>
+                                        <!-- Options will be added here based on the selected exercise -->
+                                    </select>
+                                </div>
+                                <div class="col-6 col-sm-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="myPRsCheckbox" name="my_prs">
+                                        <label class="form-check-label" for="myPRsCheckbox">My PR</label>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-2 ">
+                                    <div class="btn-container">
+                                        <button type="submit" class="btn btn-primary">Show</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                            <canvas id="progressionChart1"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
                 {% endif %}
             </div>
 
