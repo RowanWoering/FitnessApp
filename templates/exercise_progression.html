@@ -100,12 +100,13 @@
                                         <div class="col-12 col-sm-4">
                                             <select class="exercise-dropdown form-select" id="exercise-dropdown4" name="exercise" class="form-select" required>
                                                 <option value="" aria-placeholder="Exercise"> None </option>
-                                                {% for exercise in all_exercises %}
-                                                <option value="{{ exercise.name }}">{{ exercise.name }}</option>
-                                                {% endfor %}
                                                 {% for custom_exercise in all_custom_exercises %}
                                                 <option value="{{ custom_exercise.name }}">{{ custom_exercise.name }}</option>
                                                 {% endfor %}
+                                                {% for exercise in all_exercises %}
+                                                <option value="{{ exercise.name }}">{{ exercise.name }}</option>
+                                                {% endfor %}
+
                                             </select>
                                         </div>
                                         <div class="col-6 col-sm-4">

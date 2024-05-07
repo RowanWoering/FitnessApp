@@ -125,7 +125,7 @@ def home_view(request):
 def create_workout_view(request):
     form = ExerciseForm()
     exercise_lst = ExerciseList.objects.all().order_by('name')
-    custom_exercise_lst = CustomExerciseList.objects.all()
+    custom_exercise_lst = CustomExerciseList.objects.filter(user=request.user).order_by('name')
     exercise_tuple=[]
     for i in range(len(exercise_lst)):
         exercise_tuple.append((i,exercise_lst[i]))
@@ -189,7 +189,7 @@ def edit_workout(request, workout_id=None):
 
     else:
         all_exercises = ExerciseList.objects.all().order_by('name')
-        all_custom_exercises = CustomExerciseList.objects.all()
+        all_custom_exercises = CustomExerciseList.objects.filter(user=request.user).order_by('name')
         #all_exercises = ['Push-up', 'Pull-up', 'Squat', 'Lunge']
         exercises = workout.exercise_set.all() if workout else None
 
@@ -539,10 +539,10 @@ def view_friend_workout(request, user_id):
     current_month = today.month
     sessions = Session.objects.filter(user=user)
 
-    all_exercises = ExerciseList.objects.all()
-    all_custom_exercises = CustomExerciseList.objects.all()
-    exercises_with_progression = Progression.objects.filter(user=user).values_list('exercise', flat=True).distinct()
-    exercises_with_prs = PersonalRecord.objects.filter(user=user).values_list('exercise', flat=True).distinct()
+    all_exercises = ExerciseList.objects.all().order_by('name')
+    all_custom_exercises = CustomExerciseList.objects.filter(user=user).order_by('name')
+    exercises_with_progression = Progression.objects.filter(user=user).values_list('exercise', flat=True).distinct().order_by('exercise')
+    exercises_with_prs = PersonalRecord.objects.filter(user=user).values_list('exercise', flat=True).distinct().order_by('exercise')
 
     # Check if the current user is friends with the user whose workouts they want to view
     if Friendship.objects.filter(creator=request.user, friend=user).exists() or Friendship.objects.filter(creator=user, friend=request.user).exists():
@@ -630,10 +630,10 @@ def view_friend_workout(request, user_id):
 
 login_required
 def exercise_progression_view(request):
-    all_exercises = ExerciseList.objects.all()
-    all_custom_exercises = CustomExerciseList.objects.all()
-    exercises_with_progression = Progression.objects.filter(user=request.user).values_list('exercise', flat=True).distinct()
-    exercises_with_prs = PersonalRecord.objects.filter(user=request.user).values_list('exercise', flat=True).distinct()
+    all_exercises = ExerciseList.objects.all().order_by('name')
+    all_custom_exercises = CustomExerciseList.objects.filter(user=request.user).order_by('name')
+    exercises_with_progression = Progression.objects.filter(user=request.user).values_list('exercise', flat=True).distinct().order_by('exercise')
+    exercises_with_prs = PersonalRecord.objects.filter(user=request.user).values_list('exercise', flat=True).distinct().order_by('exercise')
 
     return render(request, 'exercise_progression.html', {'exercises': exercises_with_progression, 'exercises1': exercises_with_prs, 'all_exercises':all_exercises, 'all_custom_exercises': all_custom_exercises})
 
@@ -827,6 +827,13 @@ def copy_workout(request, workout_id):
         # Optionally, clone associated exercises if needed
         exercises = Exercise.objects.filter(name=friend_workout)
         for exercise in exercises:
+            if CustomExerciseList.objects.filter(user=friend_workout.user, name=exercise.exercise).exists():
+            # Check if I already have this custom exercise
+                if not CustomExerciseList.objects.filter(user=request.user, name=exercise.exercise).exists():
+                    CustomExerciseList.objects.create(
+                        user=request.user,
+                        name=exercise.exercise,
+                    )
             Exercise.objects.create(
                 name=my_workout,
                 exercise=exercise.exercise,

@@ -145,6 +145,12 @@
         }
 
     </style>
+    <script>
+        $(document).ready(function() {
+            localStorage.setItem('loggedIn', 'true');
+            console.log(localStorage.getItem('loggedIn'))
+        });
+    </script>
     
 {% endblock content %}
 

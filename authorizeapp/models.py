@@ -10,7 +10,7 @@ class WorkoutName(models.Model):
     name = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.user.username}"
 
 class Exercise(models.Model):
     name = models.ForeignKey(WorkoutName, on_delete=models.CASCADE)
@@ -19,7 +19,7 @@ class Exercise(models.Model):
     sets = models.IntegerField()
 
     def __str__(self):
-        return self.exercise
+        return f"{self.exercise} - {self.name.user.username}"
     
 class Session(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -30,7 +30,7 @@ class Session(models.Model):
 
 
     def __str__(self):
-        return f"{self.name} on {self.date}"
+        return f"{self.name} on {self.date} - {self.user.username}"
 
 class SessionExercise(models.Model):
     session = models.ForeignKey(Session, on_delete=models.CASCADE, related_name='session_exercises')
@@ -39,10 +39,8 @@ class SessionExercise(models.Model):
     sets = models.IntegerField()
     # exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
 
-
-
     def __str__(self):
-        return f"{self.exercise}"
+        return f"{self.exercise} - {self.session.user.username}"
     
 class SessionExerciseSet(models.Model):
     session_exercise = models.ForeignKey(SessionExercise, related_name='set_list', on_delete=models.CASCADE)
@@ -50,6 +48,8 @@ class SessionExerciseSet(models.Model):
     reps = models.IntegerField()
     weight = models.DecimalField(max_digits=5, decimal_places=1)
     partials = models.IntegerField(default=0)
+    def __str__(self):
+        return f"{self.set} - {self.session_exercise} - {self.session_exercise.session.user.username}"
 
 class ExerciseList(models.Model):
     name = models.CharField(max_length=255)
@@ -57,7 +57,7 @@ class ExerciseList(models.Model):
     equipment = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name}"
     
 class CustomExerciseList(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='custom_exercises')
@@ -99,7 +99,7 @@ class PersonalRecord(models.Model):
     date = models.DateField()
 
     def __str__(self):
-        return f"{self.exercise} - {self.weight}kgs for {self.reps} reps"
+        return f"{self.exercise}with {self.weight}kgs for {self.reps} reps - {self.user.username}"
 
 class Progression(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -110,7 +110,7 @@ class Progression(models.Model):
     date = models.DateField()
 
     def __str__(self):
-        return f"{self.exercise} progression"
+        return f"{self.exercise} progression - {self.user.username}"
 
 
 class UserProfile(models.Model):
@@ -155,7 +155,7 @@ class BodyMetric(models.Model):
             print(self.weight)
             height_in_meters = int(self.user.profile.length) / 100  # Assuming height is stored in centimeters
             print(height_in_meters)
-            self.bmi = (int(self.weight) / (height_in_meters ** 2))
+            self.bmi = (float(self.weight) / (height_in_meters ** 2))
         super().save(*args, **kwargs)
 
     def __str__(self):
